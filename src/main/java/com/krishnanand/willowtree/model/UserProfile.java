@@ -2,6 +2,7 @@
 package com.krishnanand.willowtree.model;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -24,8 +25,8 @@ import lombok.ToString;
  * An instance of this class encapsulates a profile of the user.
  */
 @Data
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode()
+@ToString()
 @Entity
 @Table(name="user_profile")
 @JsonInclude(Include.NON_NULL)
@@ -63,4 +64,18 @@ public class UserProfile implements Serializable {
     
     @OneToMany(mappedBy="profile", cascade= {CascadeType.ALL})
     private Set<SocialLinks> socialLinks;
+    
+    public HeadShot getHeadshot() {
+      if (this.headshot == null) {
+        this.headshot = new HeadShot();
+      }
+      return this.headshot;
+    }
+    
+    public Set<SocialLinks> getSocialLinks() {
+      if (this.socialLinks == null) {
+        this.socialLinks = new LinkedHashSet<>();
+      }
+      return this.socialLinks;
+    }
 }

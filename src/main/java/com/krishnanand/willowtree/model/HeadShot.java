@@ -21,8 +21,8 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude= {"profile"})
+@ToString(exclude= {"profile"})
 @Entity
 @Table(name="head_shot")
 public class HeadShot implements Serializable {
@@ -54,9 +54,9 @@ public class HeadShot implements Serializable {
   
   @Getter
   @Setter
-  private int height;
+  private Integer height;
   
   @Getter
   @Setter
-  private int width;
+  private Integer width;
 }

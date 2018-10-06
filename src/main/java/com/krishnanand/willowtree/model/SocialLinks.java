@@ -26,8 +26,8 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
-@EqualsAndHashCode
-@ToString
+@EqualsAndHashCode(exclude= {"profile"})
+@ToString(exclude= {"profile"})
 @Entity
 @Table(name="social_links")
 public class SocialLinks implements Serializable {
@@ -41,7 +41,15 @@ public class SocialLinks implements Serializable {
   
   @Setter
   @Getter
-  private String socialLink;
+  private String type;
+  
+  @Setter
+  @Getter
+  private String callToAction;
+  
+  @Setter
+  @Getter
+  private String url;
   
   @ManyToOne(fetch=FetchType.EAGER)
   @JoinColumn(name="profile_id")

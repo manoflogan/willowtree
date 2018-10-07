@@ -3,6 +3,7 @@ package com.krishnanand.willowtree.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -37,18 +38,22 @@ public class SocialLinks implements Serializable {
   @JsonIgnore
   @Getter
   @Setter
+  @Column(name="social_link_id", nullable=false)
   private long id;
   
   @Setter
   @Getter
+  @Column(name="social_link_type")
   private String type;
   
   @Setter
   @Getter
+  @Column(name="call_to_action")
   private String callToAction;
   
   @Setter
   @Getter
+  @Column
   private String url;
   
   @ManyToOne(fetch=FetchType.EAGER)
@@ -56,5 +61,4 @@ public class SocialLinks implements Serializable {
   @Getter
   @Setter
   private UserProfile profile;
-
 }

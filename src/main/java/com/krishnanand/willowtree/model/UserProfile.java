@@ -6,14 +6,19 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,54 +33,67 @@ import lombok.ToString;
 @EqualsAndHashCode()
 @ToString()
 @Entity
-@Table(name="user_profile")
+@Table(name = "user_profile")
 @JsonInclude(Include.NON_NULL)
 public class UserProfile implements Serializable {
+  
+  @Getter
+  @Setter
+  @Id
+  @GeneratedValue(strategy=GenerationType.AUTO)
+  @JsonIgnore
+  private Long id;
 
-    @Getter
-    @Setter
-    @Id
-    private String id;
- 
-    @Getter
-    @Setter
-    private String type;
-    
-    @Getter
-    @Setter
-    private String slug;
-    
-    @Getter
-    @Setter
-    private String jobTitle;
-    
-    @Getter
-    @Setter
-    private String firstName;
-    
-    @Getter
-    @Setter
-    private String lastName;
-    
-    @OneToOne(cascade= {CascadeType.ALL}, mappedBy="profile")
-    @Getter
-    @Setter
-    private HeadShot headshot;
-    
-    @OneToMany(mappedBy="profile", cascade= {CascadeType.ALL})
-    private Set<SocialLinks> socialLinks;
-    
-    public HeadShot getHeadshot() {
-      if (this.headshot == null) {
-        this.headshot = new HeadShot();
-      }
-      return this.headshot;
+  @Getter
+  @Setter
+  @Column(name = "profile_id", nullable = false)
+  @JsonProperty("id")
+  private String profileId;
+
+  @Getter
+  @Setter
+  @Column(name = "profile_type")
+  private String type;
+
+  @Getter
+  @Setter
+  @Column(nullable = false)
+  private String slug;
+
+  @Getter
+  @Setter
+  @Column(name = "job_title")
+  private String jobTitle;
+
+  @Getter
+  @Setter
+  @Column(name = "first_name")
+  private String firstName;
+
+  @Getter
+  @Setter
+  @Column(name = "last_name")
+  private String lastName;
+
+  @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "profile")
+  @Setter
+  private HeadShot headshot;
+
+  @OneToMany(mappedBy = "profile", cascade = {CascadeType.ALL})
+  @Setter
+  private Set<SocialLinks> socialLinks;
+
+  public HeadShot getHeadshot() {
+    if (this.headshot == null) {
+      this.headshot = new HeadShot();
     }
-    
-    public Set<SocialLinks> getSocialLinks() {
-      if (this.socialLinks == null) {
-        this.socialLinks = new LinkedHashSet<>();
-      }
-      return this.socialLinks;
+    return this.headshot;
+  }
+
+  public Set<SocialLinks> getSocialLinks() {
+    if (this.socialLinks == null) {
+      this.socialLinks = new LinkedHashSet<>();
     }
+    return this.socialLinks;
+  }
 }

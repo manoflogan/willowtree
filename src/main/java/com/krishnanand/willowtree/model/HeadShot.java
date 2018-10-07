@@ -3,11 +3,16 @@ package com.krishnanand.willowtree.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,35 +33,48 @@ import lombok.ToString;
 public class HeadShot implements Serializable {
   
   @Id
+  @GeneratedValue
+  @JsonIgnore
+  @Column(nullable=false)
+  private Long id;
+    
   @OneToOne()
-  @JoinColumn(name="profile_id")
+  @JoinColumn(name="id")
   private UserProfile profile;
   
   @Getter
   @Setter
+  @Column(name="headshot_type")
   private String type;
   
   @Getter
   @Setter
+  @Column(name="mime_type")
   private String mimeType;
   
   @Getter
   @Setter
-  private String id;
+  @Column(name="headshot_id")
+  @JsonProperty("id")
+  private String headshotId;
   
   @Getter
   @Setter
+  @Column
   private String url;
   
   @Getter
   @Setter
+  @Column
   private String alt;
   
   @Getter
   @Setter
+  @Column(nullable=true)
   private Integer height;
   
   @Getter
   @Setter
+  @Column(nullable=true)
   private Integer width;
 }

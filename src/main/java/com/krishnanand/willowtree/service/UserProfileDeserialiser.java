@@ -30,7 +30,7 @@ public class UserProfileDeserialiser extends JsonDeserializer<List<UserProfile>>
   public List<UserProfile> deserialize(JsonParser parser, DeserializationContext context)
       throws IOException, JsonProcessingException {
     JsonNode node = parser.getCodec().readTree(parser);
-    LOGGER.debug(String.format("Initialising parsing of the {0} user profiles.", node.size()));
+    LOGGER.debug(String.format("Initialising parsing of the %s user profiles.", node.size()));
     Iterator<JsonNode> iterator = node.elements();
     List<UserProfile> userProfiles = new ArrayList<>();
     while (iterator.hasNext()) {

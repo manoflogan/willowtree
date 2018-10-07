@@ -12,6 +12,6 @@ import com.krishnanand.willowtree.model.UserProfile;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Repository
-public interface IUserProfileRepository extends JpaRepository<UserProfile, String> {
+public interface IUserProfileRepository extends JpaRepository<UserProfile, Long> {
 
 }

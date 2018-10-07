@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -33,7 +34,11 @@ import lombok.ToString;
 @EqualsAndHashCode()
 @ToString()
 @Entity
-@Table(name = "user_profile")
+@Table(name = "user_profile", indexes= {
+    @Index(columnList="first_name", name="index_profile_first_name"),
+    @Index(columnList="last_name", name="index_profile_last_name"),
+    @Index(columnList="profile_type", name="index_profile_type")
+})
 @JsonInclude(Include.NON_NULL)
 public class UserProfile implements Serializable {
   

@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.krishnanand.willowtree.model.HeadShot;
-import com.krishnanand.willowtree.model.UserProfile;
 
 /**
  * Repository to handle access operations for {@link HeadShot}.
@@ -13,6 +12,6 @@ import com.krishnanand.willowtree.model.UserProfile;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Repository
-public interface IHeadshotRepository extends JpaRepository<HeadShot, UserProfile> {
+public interface IHeadshotRepository extends JpaRepository<HeadShot, Long> {
 
 }

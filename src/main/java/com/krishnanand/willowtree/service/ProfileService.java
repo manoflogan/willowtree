@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -21,9 +23,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.krishnanand.willowtree.model.ProfileFetchStatus;
+import com.krishnanand.willowtree.model.Quiz;
 import com.krishnanand.willowtree.model.UserProfile;
 import com.krishnanand.willowtree.repository.IProfileFetchStatusRepository;
 import com.krishnanand.willowtree.repository.IUserProfileRepository;
+import com.krishnanand.willowtree.repository.QuizRepositoryCustom;
 
 /**
  * A single point of entry to all the profile related services.
@@ -33,6 +37,8 @@ import com.krishnanand.willowtree.repository.IUserProfileRepository;
 @Service
 @PropertySource(value = "classpath:willowtree.properties", ignoreResourceNotFound = false)
 public class ProfileService implements IProfileService {
+  
+  private static final Log LOG = LogFactory.getLog(ProfileService.class);
 
   @Autowired
   private RestTemplate restTemplate;
@@ -43,6 +49,9 @@ public class ProfileService implements IProfileService {
   private final IProfileFetchStatusRepository fetchStatusRepository;
   
   private final IUserProfileRepository userProfileRepository;
+  
+  @Autowired
+  private QuizRepositoryCustom quizRepository;
 
   @Autowired
   ProfileService(IProfileFetchStatusRepository fetchStatusRepository,
@@ -68,6 +77,7 @@ public class ProfileService implements IProfileService {
     ProfileFetchStatus profileFetchStatus = this.fetchStatusRepository.findByFetched(Boolean.TRUE);
     if (profileFetchStatus == null || profileFetchStatus.getFetched() == null
         || !profileFetchStatus.getFetched().booleanValue()) {
+      LOG.debug("Initialising the user profiles.");
       List<UserProfile> userProfiles = this.restTemplate.execute(this.url, HttpMethod.GET, null,
           new ResponseExtractor<List<UserProfile>>() {
 
@@ -93,4 +103,9 @@ public class ProfileService implements IProfileService {
     return true;
   }
 
+  @Override
+  @Transactional
+  public Quiz registerQuiz() {
+    return this.quizRepository.registerQuiz();
+  }
 }

@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -29,7 +30,11 @@ import lombok.ToString;
 @EqualsAndHashCode(exclude= {"profile"})
 @ToString(exclude= {"profile"})
 @Entity
-@Table(name="head_shot")
+@Table(name="head_shot", 
+    indexes= {
+        @Index(name="index_headshot_id", columnList="headshot_id"),
+        @Index(name="index_headshot_url", columnList="url")
+    })
 public class HeadShot implements Serializable {
   
   @Id

@@ -1,6 +1,8 @@
 // Copyright 2018. All Rights Reserved.
 package com.krishnanand.willowtree.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,13 +31,15 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@Table(name="quiz_questions")
-public class QuizQuestion {
+@Table(name="quiz_questions", uniqueConstraints = {
+    @UniqueConstraint(columnNames= {"quiz_id", "question_type"})
+})
+public class QuizQuestion implements Serializable {
   
   @Id
   @GeneratedValue
   @JsonIgnore
-  @Column(name="question_question_id")
+  @Column(name="id")
   private Long id;
   
   @Column(name="question_type")

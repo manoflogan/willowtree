@@ -2,6 +2,7 @@
 package com.krishnanand.willowtree.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -52,5 +54,9 @@ public class Quiz implements Serializable {
   @OneToOne(cascade= {CascadeType.ALL},mappedBy="quiz")
   @JsonBackReference
   private Score score;
+  
+  @OneToMany(cascade= {CascadeType.ALL}, mappedBy="quiz")
+  @JsonBackReference
+  private Set<QuizQuestion> quizQuestions;
   
 }

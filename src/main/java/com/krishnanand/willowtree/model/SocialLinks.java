@@ -56,7 +56,7 @@ public class SocialLinks implements Serializable {
   @Column
   private String url;
   
-  @ManyToOne(fetch=FetchType.EAGER)
+  @ManyToOne(fetch=FetchType.LAZY)
   @JoinColumn(name="profile_id")
   @Getter
   @Setter

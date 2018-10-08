@@ -82,11 +82,9 @@ public class UserProfile implements Serializable {
   private String lastName;
 
   @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "profile", optional=false, fetch=FetchType.LAZY)
-  @Setter
   private HeadShot headshot;
 
-  @OneToMany(mappedBy = "profile", cascade = {CascadeType.ALL})
-  @Setter
+  @OneToMany(mappedBy = "profile", cascade = {CascadeType.ALL}, fetch=FetchType.LAZY)
   private Set<SocialLinks> socialLinks;
 
   public HeadShot getHeadshot() {

@@ -27,11 +27,13 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.krishnanand.willowtree.model.HeadShot;
 import com.krishnanand.willowtree.model.ProfileFetchStatus;
 import com.krishnanand.willowtree.model.Quiz;
+import com.krishnanand.willowtree.model.QuizQuestion;
 import com.krishnanand.willowtree.model.UserProfile;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
 import com.krishnanand.willowtree.repository.IProfileFetchStatusRepository;
+import com.krishnanand.willowtree.repository.IQuizQuestionRepository;
 import com.krishnanand.willowtree.repository.IUserProfileRepository;
-import com.krishnanand.willowtree.repository.QuizRepositoryCustom;
+import com.krishnanand.willowtree.repository.QuizRepository;
 import com.krishnanand.willowtree.utils.QuestionTypes;
 
 /**
@@ -58,10 +60,13 @@ public class ProfileService implements IProfileService {
   private final IUserProfileRepository userProfileRepository;
   
   @Autowired
-  private QuizRepositoryCustom quizRepository;
+  private QuizRepository quizRepository;
   
   @Autowired
   private MessageSource messageSource;
+  
+  @Autowired
+  private IQuizQuestionRepository quizQuestionRepository;
 
   @Autowired
   ProfileService(IProfileFetchStatusRepository fetchStatusRepository,
@@ -120,6 +125,11 @@ public class ProfileService implements IProfileService {
     return this.quizRepository.registerQuiz();
   }
 
+  /**
+   * Fetches profile and head shots of questions.
+   * 
+   * <p>In addition, the implementation records the type of questions asked for the quiz.
+   */
   @Override
   @Transactional
   public UserProfileQuestion fetchUserProfilesAndHeadShots(
@@ -142,9 +152,30 @@ public class ProfileService implements IProfileService {
       userProfileQuestion.addImage(headshot.getUrl(), headshot.getHeight(), headshot.getWidth());
     }
     LOG.info("Fetching the user profiles and headshots completed for quiz id :" + quizId);
+    this.initialiseQuizQuestion(quizId, QuestionTypes.IDENTIFY_AMONG_SIX_FACE);
     return userProfileQuestion;
   }
   
+  /**
+   * Registers the questions associated with a quiz.
+   * 
+   * @param quizId unique quiz id
+   * @param questionType question type.
+   */
+  private void initialiseQuizQuestion(String quizId, QuestionTypes questionType) {
+    QuizQuestion quizQuestion = new QuizQuestion();
+    Quiz quizObject = this.quizRepository.findByQuizId(quizId);
+    quizQuestion.setQuiz(quizObject);
+    quizQuestion.setQuestionType(questionType.getType());
+    this.quizQuestionRepository.save(quizQuestion);
+  }
+  
+  /**
+   * Sets the question text based on locale.
+   * @param userProfileQuestion
+   * @param questionType
+   * @param locale
+   */
   private void setQuestionText(UserProfileQuestion userProfileQuestion, QuestionTypes questionType,
       Locale locale) {
     if (questionType == QuestionTypes.IDENTIFY_AMONG_SIX_FACE) {

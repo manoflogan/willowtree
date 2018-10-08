@@ -10,5 +10,7 @@ import com.krishnanand.willowtree.model.Quiz;
  * @author krishnanand (Kartik Krishnanand)
  */
 public interface QuizRepository extends JpaRepository<Quiz, Long>, QuizRepositoryCustom {
+  
+  Quiz findByQuizId(String quizId);
 
 }

@@ -5,13 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
@@ -22,12 +24,15 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.krishnanand.willowtree.model.HeadShot;
 import com.krishnanand.willowtree.model.ProfileFetchStatus;
 import com.krishnanand.willowtree.model.Quiz;
 import com.krishnanand.willowtree.model.UserProfile;
+import com.krishnanand.willowtree.model.UserProfileQuestion;
 import com.krishnanand.willowtree.repository.IProfileFetchStatusRepository;
 import com.krishnanand.willowtree.repository.IUserProfileRepository;
 import com.krishnanand.willowtree.repository.QuizRepositoryCustom;
+import com.krishnanand.willowtree.utils.QuestionTypes;
 
 /**
  * A single point of entry to all the profile related services.
@@ -35,7 +40,6 @@ import com.krishnanand.willowtree.repository.QuizRepositoryCustom;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Service
-@PropertySource(value = "classpath:willowtree.properties", ignoreResourceNotFound = false)
 public class ProfileService implements IProfileService {
   
   private static final Log LOG = LogFactory.getLog(ProfileService.class);
@@ -45,6 +49,9 @@ public class ProfileService implements IProfileService {
 
   @Value("${init.url}")
   private String url;
+  
+  @Value("${image.picture.count}")
+  private int imagePictureCount;
 
   private final IProfileFetchStatusRepository fetchStatusRepository;
   
@@ -52,6 +59,9 @@ public class ProfileService implements IProfileService {
   
   @Autowired
   private QuizRepositoryCustom quizRepository;
+  
+  @Autowired
+  private MessageSource messageSource;
 
   @Autowired
   ProfileService(IProfileFetchStatusRepository fetchStatusRepository,
@@ -99,6 +109,7 @@ public class ProfileService implements IProfileService {
       status.setCreationTimeStamp(LocalDateTime.now(ZoneOffset.UTC));
       status.setLastModifiedTimeStamp(LocalDateTime.now(ZoneOffset.UTC));
       this.fetchStatusRepository.save(status);
+      LOG.info("Profile initialisation complete");
     }
     return true;
   }
@@ -107,5 +118,37 @@ public class ProfileService implements IProfileService {
   @Transactional
   public Quiz registerQuiz() {
     return this.quizRepository.registerQuiz();
+  }
+
+  @Override
+  @Transactional
+  public UserProfileQuestion fetchUserProfilesAndHeadShots(
+      String quizId, QuestionTypes questionTypes, Locale locale) {
+    LOG.info("Fetching the user profiles and headshots for quiz id: " + quizId);
+    List<UserProfile> userProfiles =
+        this.quizRepository.fetchImagesQuestion(this.imagePictureCount);
+    if (userProfiles == null || userProfiles.isEmpty()) {
+      return null;
+    }
+    Collections.shuffle(userProfiles);
+    UserProfileQuestion userProfileQuestion = new UserProfileQuestion();
+    // Choose the first user profile.
+    UserProfile first = userProfiles.get(0);
+    userProfileQuestion.setProfileId(first.getProfileId());
+    userProfileQuestion.setQuizId(quizId);
+    this.setQuestionText(userProfileQuestion, QuestionTypes.IDENTIFY_AMONG_SIX_FACE, locale);
+    for (UserProfile userProfile : userProfiles) {
+      HeadShot headshot = userProfile.getHeadshot();
+      userProfileQuestion.addImage(headshot.getUrl(), headshot.getHeight(), headshot.getWidth());
+    }
+    LOG.info("Fetching the user profiles and headshots completed for quiz id :" + quizId);
+    return userProfileQuestion;
+  }
+  
+  private void setQuestionText(UserProfileQuestion userProfileQuestion, QuestionTypes questionType,
+      Locale locale) {
+    if (questionType == QuestionTypes.IDENTIFY_AMONG_SIX_FACE) {
+      userProfileQuestion.setQuestionText(messageSource.getMessage("identify.person", null, locale));
+    }
   }
 }

@@ -5,10 +5,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -43,8 +44,8 @@ public class HeadShot implements Serializable {
   @Column(nullable=false)
   private Long id;
     
-  @OneToOne()
-  @JoinColumn(name="id")
+  @OneToOne(fetch = FetchType.LAZY)
+  @MapsId
   private UserProfile profile;
   
   @Getter

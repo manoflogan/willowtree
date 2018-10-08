@@ -60,5 +60,6 @@ public class SocialLinks implements Serializable {
   @JoinColumn(name="profile_id")
   @Getter
   @Setter
+  @JsonIgnore
   private UserProfile profile;
 }

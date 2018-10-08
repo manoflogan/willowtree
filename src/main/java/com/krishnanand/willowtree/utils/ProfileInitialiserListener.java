@@ -5,8 +5,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import com.krishnanand.willowtree.service.IProfileService;
@@ -17,7 +17,7 @@ import com.krishnanand.willowtree.service.IProfileService;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Component
-public class ProfileInitialiserListener implements ApplicationListener<ContextRefreshedEvent> {
+public class ProfileInitialiserListener {
   
   private final IProfileService profileService;
   
@@ -26,8 +26,8 @@ public class ProfileInitialiserListener implements ApplicationListener<ContextRe
     this.profileService = profileService;
   }
 
-  @Override
-  public void onApplicationEvent(ContextRefreshedEvent event) {
+  @EventListener
+  public void appReady(ApplicationReadyEvent event) {
     this.profileService.initialiseProfiles();
   }
   

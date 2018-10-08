@@ -29,6 +29,8 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
+@Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 @Entity
@@ -38,21 +40,15 @@ import lombok.ToString;
 @JsonInclude(Include.NON_EMPTY)
 public class Quiz implements Serializable {
   
-  @Getter
-  @Setter
-  @Column(name="quiz_id", nullable=false)
+  @Column(name="quiz_id", nullable=false, unique=true)
   private String quizId;
   
-  @Getter
-  @Setter
   @Column()
   @Id
   @GeneratedValue
   @JsonIgnore
   private Long id;
   
-  @Getter
-  @Setter
   @OneToOne(cascade= {CascadeType.ALL},mappedBy="quiz")
   @JsonBackReference
   private Score score;

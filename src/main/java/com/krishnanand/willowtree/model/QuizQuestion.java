@@ -11,9 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,22 +31,18 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@Table(name="quiz_questions", uniqueConstraints = {
-    @UniqueConstraint(columnNames= {"quiz_id", "question_type"})
-})
+@Table(name="quiz_questions")
 public class QuizQuestion implements Serializable {
   
   @Id
   @GeneratedValue
-  @JsonIgnore
   @Column(name="id")
+  @JsonIgnore
   private Long id;
-  
-  @Column(name="question_type")
-  private String questionType;
   
   @ManyToOne(fetch=FetchType.EAGER)
   @JoinColumn(name="quiz_id")
   @JsonIgnore
+  @JsonManagedReference
   private Quiz quiz;
 }

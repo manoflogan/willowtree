@@ -7,7 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -30,20 +30,18 @@ import lombok.ToString;
 @Data
 @ToString(exclude= {"quiz"})
 @EqualsAndHashCode(exclude={"quiz"})
+@Getter
+@Setter
 public class Score implements Serializable {
   
   @Id
   @GeneratedValue
   @JsonIgnore
-  @Getter
-  @Setter
   @Column(name="score_id")
   private Long id;
-  
-  @Getter
-  @Setter
+
   @OneToOne
-  @JoinColumn(nullable=false, name="id")
+  @MapsId
   @JsonManagedReference
   private Quiz quiz;
   

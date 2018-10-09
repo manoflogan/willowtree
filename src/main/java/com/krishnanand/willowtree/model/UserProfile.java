@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -41,50 +42,41 @@ import lombok.ToString;
     @Index(columnList="profile_type", name="index_profile_type")
 })
 @JsonInclude(Include.NON_NULL)
+@Getter
+@Setter
 public class UserProfile implements Serializable {
   
-  @Getter
-  @Setter
   @Id
   @GeneratedValue(strategy=GenerationType.AUTO)
   @JsonIgnore
   private Long id;
 
-  @Getter
-  @Setter
   @Column(name = "profile_id", nullable = false)
   @JsonProperty("id")
   private String profileId;
 
-  @Getter
-  @Setter
   @Column(name = "profile_type")
   private String type;
 
-  @Getter
-  @Setter
   @Column(nullable = false)
   private String slug;
 
-  @Getter
-  @Setter
+
   @Column(name = "job_title")
   private String jobTitle;
 
-  @Getter
-  @Setter
   @Column(name = "first_name")
   private String firstName;
 
-  @Getter
-  @Setter
   @Column(name = "last_name")
   private String lastName;
 
   @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "profile", optional=false, fetch=FetchType.LAZY)
+  @Setter(AccessLevel.NONE)
   private HeadShot headshot;
 
   @OneToMany(mappedBy = "profile", cascade = {CascadeType.ALL}, fetch=FetchType.LAZY)
+  @Setter(AccessLevel.NONE)
   private Set<SocialLinks> socialLinks;
 
   public HeadShot getHeadshot() {

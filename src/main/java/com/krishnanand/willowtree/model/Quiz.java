@@ -2,6 +2,7 @@
 package com.krishnanand.willowtree.model;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -59,4 +60,10 @@ public class Quiz implements Serializable {
   @JsonBackReference
   private Set<QuizQuestion> quizQuestions;
   
+  public Set<QuizQuestion> getQuizQuestions() {
+    if (this.quizQuestions == null) {
+      this.quizQuestions = new LinkedHashSet<>();
+    }
+    return this.quizQuestions;
+  }
 }

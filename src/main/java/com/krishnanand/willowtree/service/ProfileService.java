@@ -3,6 +3,7 @@ package com.krishnanand.willowtree.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -27,14 +28,15 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.krishnanand.willowtree.model.HeadShot;
 import com.krishnanand.willowtree.model.ProfileFetchStatus;
 import com.krishnanand.willowtree.model.Quiz;
+import com.krishnanand.willowtree.model.QuizAnswer;
 import com.krishnanand.willowtree.model.QuizQuestion;
+import com.krishnanand.willowtree.model.Solution;
 import com.krishnanand.willowtree.model.UserProfile;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
 import com.krishnanand.willowtree.repository.IProfileFetchStatusRepository;
 import com.krishnanand.willowtree.repository.IQuizQuestionRepository;
 import com.krishnanand.willowtree.repository.IUserProfileRepository;
 import com.krishnanand.willowtree.repository.QuizRepository;
-import com.krishnanand.willowtree.utils.QuestionTypes;
 
 /**
  * A single point of entry to all the profile related services.
@@ -133,7 +135,7 @@ public class ProfileService implements IProfileService {
   @Override
   @Transactional
   public UserProfileQuestion fetchUserProfilesAndHeadShots(
-      String quizId, QuestionTypes questionTypes, Locale locale) {
+      String quizId, Locale locale) {
     LOG.info("Fetching the user profiles and headshots for quiz id: " + quizId);
     List<UserProfile> userProfiles =
         this.quizRepository.fetchImagesQuestion(this.imagePictureCount);
@@ -146,13 +148,20 @@ public class ProfileService implements IProfileService {
     UserProfile first = userProfiles.get(0);
     userProfileQuestion.setProfileId(first.getProfileId());
     userProfileQuestion.setQuizId(quizId);
-    this.setQuestionText(userProfileQuestion, QuestionTypes.IDENTIFY_AMONG_SIX_FACE, locale);
+    QuizQuestion quizQuestion = this.initialiseQuizQuestion(quizId);
+    userProfileQuestion.setQuestionId(quizQuestion.getId());
+    // Choose random name.
+    int num = new SecureRandom().nextInt(this.imagePictureCount);
+    int count = 0;
     for (UserProfile userProfile : userProfiles) {
+      if (count == num) {
+        this.setQuestionText(userProfileQuestion, locale, userProfile.getFirstName(), userProfile.getLastName());
+      }
       HeadShot headshot = userProfile.getHeadshot();
       userProfileQuestion.addImage(headshot.getUrl(), headshot.getHeight(), headshot.getWidth());
+      count ++;
     }
     LOG.info("Fetching the user profiles and headshots completed for quiz id :" + quizId);
-    this.initialiseQuizQuestion(quizId, QuestionTypes.IDENTIFY_AMONG_SIX_FACE);
     return userProfileQuestion;
   }
   
@@ -160,26 +169,33 @@ public class ProfileService implements IProfileService {
    * Registers the questions associated with a quiz.
    * 
    * @param quizId unique quiz id
-   * @param questionType question type.
+   * @param questionType question type
    */
-  private void initialiseQuizQuestion(String quizId, QuestionTypes questionType) {
+  private QuizQuestion initialiseQuizQuestion(String quizId) {
     QuizQuestion quizQuestion = new QuizQuestion();
     Quiz quizObject = this.quizRepository.findByQuizId(quizId);
     quizQuestion.setQuiz(quizObject);
-    quizQuestion.setQuestionType(questionType.getType());
+    quizObject.getQuizQuestions().add(quizQuestion);
     this.quizQuestionRepository.save(quizQuestion);
+    return quizQuestion;
   }
   
   /**
    * Sets the question text based on locale.
-   * @param userProfileQuestion
-   * @param questionType
-   * @param locale
+   * 
+   * @param userProfileQuestion user profile
+   * @param questionType enum representing the question type
+   * @param locale locale
+   * @param args varargs used to populate the resource bundle
    */
-  private void setQuestionText(UserProfileQuestion userProfileQuestion, QuestionTypes questionType,
-      Locale locale) {
-    if (questionType == QuestionTypes.IDENTIFY_AMONG_SIX_FACE) {
-      userProfileQuestion.setQuestionText(messageSource.getMessage("identify.person", null, locale));
-    }
+  private void setQuestionText(UserProfileQuestion userProfileQuestion,
+      Locale locale, Object...args) {
+      userProfileQuestion.setQuestionText(
+          messageSource.getMessage("identify.person", args, locale));
+  }
+
+  @Override
+  public Solution checkAnswer(String quizId, QuizAnswer answer) {
+    return null;
   }
 }

@@ -43,7 +43,7 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
   }
 
   /**
-   * Initialises and returns a quiz attempt within a transaction.
+   * Initialises and returns a quiz object representing a quiz game within a transaction language.
    */
   @Override
   @Retryable(maxAttempts=5, value= {Exception.class}, backoff=@Backoff(delay=2000))
@@ -67,29 +67,22 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
   }
 
   @Override
+  @Retryable(maxAttempts=5, value= {Exception.class}, backoff=@Backoff(delay=2000))
   public List<UserProfile> fetchImagesQuestion(int count) {
     TypedQuery<Long> query =
-        this.em.createQuery("SELECT COUNT(*) as cnt FROM UserProfile", Long.class);
+        this.em.createQuery(
+            "SELECT COUNT(*) as cnt FROM UserProfile u where u.headshot is not null",
+            Long.class);
     int numberOfRows = (int) (query.getSingleResult() != null ? query.getSingleResult().intValue() : 0);
     if (numberOfRows == 0) {
       return null;
     }
     SecureRandom random = new SecureRandom();
-    int index = 0;
-    List<UserProfile> userProfiles = new ArrayList<>();
-    while (index < count) {
-      int num = random.nextInt(count);
-      TypedQuery<UserProfile> userProfileQuery =
-          this.em.createQuery("SELECT u FROM UserProfile u",
-              UserProfile.class).setFirstResult(num).setMaxResults(1);
-      UserProfile userProfile = userProfileQuery.getSingleResult();
-      if (userProfile.getHeadshot() == null) {
-        continue;
-      }
-      userProfiles.add(userProfile);
-      index ++;
-    }
-    return userProfiles;
+    int num = random.nextInt(numberOfRows - 6);
+    TypedQuery<UserProfile> userProfileQuery =
+          this.em.createQuery("SELECT u FROM UserProfile u WHERE u.headshot is not null",
+              UserProfile.class).setFirstResult(num).setMaxResults(count);
+    return userProfileQuery.getResultList();
   }
 
 }

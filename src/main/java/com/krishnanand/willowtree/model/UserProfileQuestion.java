@@ -4,6 +4,8 @@ package com.krishnanand.willowtree.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -14,7 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Encapsulate the asked questions.
+ * An instance of this class encapsulates the question to be answered by the participant.
  * 
  * @author krishnanand (Kartik Krishnanand)
  */
@@ -26,22 +28,25 @@ import lombok.ToString;
 public class UserProfileQuestion {
   
   /**
-   * An instance of this class is used to represent the image used to ask a question.
+   * An instance of this class is used to encapsulate the image metadata.
    */
   @Data
   @ToString
   @EqualsAndHashCode
   @AllArgsConstructor
+  @JsonInclude(Include.NON_EMPTY)
   private static class Image {
     
     private String imageUrl;
     
-    private int height;
+    private Integer height;
     
-    private int width;
+    private Integer width;
   }
   
   private String quizId;
+  
+  private Long questionId;
 
   private String questionText;
   

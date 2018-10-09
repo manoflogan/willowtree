@@ -36,6 +36,8 @@ import lombok.ToString;
         @Index(name="index_headshot_id", columnList="headshot_id"),
         @Index(name="index_headshot_url", columnList="url")
     })
+@Getter
+@Setter
 public class HeadShot implements Serializable {
   
   @Id
@@ -48,39 +50,25 @@ public class HeadShot implements Serializable {
   @MapsId
   private UserProfile profile;
   
-  @Getter
-  @Setter
   @Column(name="headshot_type")
   private String type;
   
-  @Getter
-  @Setter
   @Column(name="mime_type")
   private String mimeType;
   
-  @Getter
-  @Setter
   @Column(name="headshot_id")
   @JsonProperty("id")
   private String headshotId;
   
-  @Getter
-  @Setter
   @Column
   private String url;
   
-  @Getter
-  @Setter
   @Column
   private String alt;
   
-  @Getter
-  @Setter
   @Column(nullable=true)
   private Integer height;
   
-  @Getter
-  @Setter
   @Column(nullable=true)
   private Integer width;
 }

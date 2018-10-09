@@ -11,14 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.krishnanand.willowtree.model.Quiz;
+import com.krishnanand.willowtree.model.QuizAnswer;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
 import com.krishnanand.willowtree.service.IProfileService;
-import com.krishnanand.willowtree.utils.QuestionTypes;
 
 /**
  * Instance of this class encapsulates all the profiles of a controller.
@@ -61,7 +62,7 @@ public class ProfileController {
   public ResponseEntity<UserProfileQuestion> fetchUserProfileAndHeadShot(
       @PathVariable("quizId") String quizId, HttpServletRequest request) {
     UserProfileQuestion question = this.profileService.fetchUserProfilesAndHeadShots(
-        quizId, QuestionTypes.IDENTIFY_AMONG_SIX_FACE, RequestContextUtils.getLocale(request));
+        quizId, RequestContextUtils.getLocale(request));
     LOG.debug("Fetching user profile and headshot for " + quizId);
     if (question == null) {
       return new ResponseEntity<UserProfileQuestion>(HttpStatus.NOT_FOUND);
@@ -69,5 +70,11 @@ public class ProfileController {
     return new ResponseEntity<UserProfileQuestion>(question, HttpStatus.OK);
   }
   
-  
+  @PostMapping(value="/quiz/{quizId}/question/{questionId}")
+  public ResponseEntity<String> answerQuestion(
+      @PathVariable String quizId, @PathVariable Long questionId,
+      @RequestBody QuizAnswer quizAnswer) {
+   // this.profileService.
+    return null;
+  }
 }

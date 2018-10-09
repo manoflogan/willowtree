@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.krishnanand.willowtree.utils.QuestionType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,6 +42,12 @@ public class QuizQuestion implements Serializable {
   @Column(name="id")
   @JsonIgnore
   private Long id;
+  
+  @Enumerated(EnumType.STRING)
+  private QuestionType questionType;
+  
+  @Column(name="answer_id")
+  private Long answerId;
   
   @ManyToOne(fetch=FetchType.EAGER)
   @JoinColumn(name="quiz_id")

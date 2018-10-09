@@ -69,20 +69,31 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
   @Override
   @Retryable(maxAttempts=5, value= {Exception.class}, backoff=@Backoff(delay=2000))
   public List<UserProfile> fetchImagesQuestion(int count) {
-    TypedQuery<Long> query =
+    TypedQuery<Object[]> query =
         this.em.createQuery(
-            "SELECT COUNT(*) as cnt FROM UserProfile u where u.headshot is not null",
-            Long.class);
-    int numberOfRows = (int) (query.getSingleResult() != null ? query.getSingleResult().intValue() : 0);
-    if (numberOfRows == 0) {
-      return null;
+            "SELECT MIN(u.id), MAX(u.id) FROM UserProfile u WHERE u.headshot IS NOT NULL",
+            Object[].class);
+    Object[] numberOfRows = query.getSingleResult();
+    long minId = (long) numberOfRows[0];
+    long maxId = (long) numberOfRows[1];
+    List<Long> profileIds = new ArrayList<>();
+    int num = 0;
+    SecureRandom rnd = new SecureRandom();
+    while (num < 15) { // Arbitrarily large number
+      int n = rnd.nextInt((int) maxId);
+      if (n < minId) {
+        continue;
+      }
+      profileIds.add((long) n);
+      num ++; 
     }
-    SecureRandom random = new SecureRandom();
-    int num = random.nextInt(numberOfRows - 6);
     TypedQuery<UserProfile> userProfileQuery =
-          this.em.createQuery("SELECT u FROM UserProfile u WHERE u.headshot is not null",
-              UserProfile.class).setFirstResult(num).setMaxResults(count);
-    return userProfileQuery.getResultList();
+          this.em.createQuery(
+              "SELECT u FROM UserProfile u WHERE u.headshot IS NOT NULL AND u.id IN:profileIds",
+              UserProfile.class).setMaxResults(count);
+    userProfileQuery.setParameter("profileIds", profileIds);
+    List<UserProfile> userProfiles = userProfileQuery.getResultList();
+    return userProfiles;
   }
 
 }

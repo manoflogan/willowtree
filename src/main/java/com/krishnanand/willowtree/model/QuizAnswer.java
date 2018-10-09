@@ -2,6 +2,7 @@
 package com.krishnanand.willowtree.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.krishnanand.willowtree.utils.QuestionType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,14 +25,17 @@ public class QuizAnswer {
   // Quiz Id associated with the question.
   private String quizId;
   
-  // Unique profile id that represents the correct answer.
+  // Unique profile id that 
   @JsonProperty("id")
   private String profileId;
   
   // User provided answer.
   @JsonProperty("answer")
-  private Boolean quizAnswer;
+  private String quizAnswer;
   
-  // Unique question id associated wit hthe question.
+  // Unique question id associated wit the question.
   private Long questionId;
+  
+  
+  private QuestionType questionType;
 }

@@ -37,6 +37,7 @@ import com.krishnanand.willowtree.repository.IProfileFetchStatusRepository;
 import com.krishnanand.willowtree.repository.IQuizQuestionRepository;
 import com.krishnanand.willowtree.repository.IUserProfileRepository;
 import com.krishnanand.willowtree.repository.QuizRepository;
+import com.krishnanand.willowtree.utils.QuestionType;
 
 /**
  * A single point of entry to all the profile related services.
@@ -146,16 +147,18 @@ public class ProfileService implements IProfileService {
     UserProfileQuestion userProfileQuestion = new UserProfileQuestion();
     // Choose the first user profile.
     UserProfile first = userProfiles.get(0);
-    userProfileQuestion.setProfileId(first.getProfileId());
     userProfileQuestion.setQuizId(quizId);
-    QuizQuestion quizQuestion = this.initialiseQuizQuestion(quizId);
+    QuizQuestion quizQuestion =
+        this.initialiseQuizQuestion(quizId, QuestionType.PROFILE_NAME_FROM_HEAD_SHOT,
+            first.getId());
     userProfileQuestion.setQuestionId(quizQuestion.getId());
     // Choose random name.
     int num = new SecureRandom().nextInt(this.imagePictureCount);
     int count = 0;
     for (UserProfile userProfile : userProfiles) {
       if (count == num) {
-        this.setQuestionText(userProfileQuestion, locale, userProfile.getFirstName(), userProfile.getLastName());
+        this.setQuestionText(userProfileQuestion, locale, userProfile.getFirstName(),
+            userProfile.getLastName());
       }
       HeadShot headshot = userProfile.getHeadshot();
       userProfileQuestion.addImage(headshot.getUrl(), headshot.getHeight(), headshot.getWidth());
@@ -170,11 +173,15 @@ public class ProfileService implements IProfileService {
    * 
    * @param quizId unique quiz id
    * @param questionType question type
+   * @param correctId id to be compared against.
    */
-  private QuizQuestion initialiseQuizQuestion(String quizId) {
+  private QuizQuestion initialiseQuizQuestion(String quizId, QuestionType questionType,
+      Long answerId) {
     QuizQuestion quizQuestion = new QuizQuestion();
     Quiz quizObject = this.quizRepository.findByQuizId(quizId);
     quizQuestion.setQuiz(quizObject);
+    quizQuestion.setQuestionType(questionType);
+    quizQuestion.setAnswerId(answerId);
     quizObject.getQuizQuestions().add(quizQuestion);
     this.quizQuestionRepository.save(quizQuestion);
     return quizQuestion;
@@ -194,6 +201,19 @@ public class ProfileService implements IProfileService {
           messageSource.getMessage("identify.person", args, locale));
   }
 
+  /**
+   * Checks the solution against the data sets.
+   * 
+   * <p>The implementation checks for the following:
+   * <ul>
+   *   <li>Verify that the quiz game exists. If not, then an error is returned.</li>
+   *   <li>Verify if the question exists. If not, the the error is returned.</li>
+   *   <li>If the game exists, and the question has been registered, the solution is checked against
+   *   the table based on question type.</li>
+   *   <li>The answer is either marked as correct 
+   * </ul>
+   * @param answer answer representing the user response
+   */
   @Override
   public Solution checkAnswer(String quizId, QuizAnswer answer) {
     return null;

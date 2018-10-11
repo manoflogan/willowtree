@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,6 +42,9 @@ public class UserProfileQuestion {
     private Integer height;
     
     private Integer width;
+
+    @JsonProperty("id")
+    private String headshotId;
   }
   
   private String quizId;
@@ -55,8 +59,8 @@ public class UserProfileQuestion {
   public UserProfileQuestion() {
     this.images = new LinkedHashSet<>();
   }
-  
-  public void addImage(String url, int height, int width) {
-    this.images.add(new Image(url, height, width));
+
+  public void addImage(String url, int height, int width,String headshotId) {
+    this.images.add(new Image(url, height, width, headshotId));
   }
 }

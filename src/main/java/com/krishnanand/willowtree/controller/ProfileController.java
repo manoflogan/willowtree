@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.krishnanand.willowtree.model.Quiz;
-import com.krishnanand.willowtree.model.QuizAnswer;
+import com.krishnanand.willowtree.model.Score;
+import com.krishnanand.willowtree.model.Solution;
+import com.krishnanand.willowtree.model.UserAnswer;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
 import com.krishnanand.willowtree.service.IProfileService;
 
@@ -29,20 +31,19 @@ import com.krishnanand.willowtree.service.IProfileService;
 @RestController
 @RequestMapping("/willowtree")
 public class ProfileController {
-  
+
   private static final Log LOG = LogFactory.getLog(ProfileController.class);
-  
+
   private final IProfileService profileService;
-  
+
   @Autowired
   public ProfileController(IProfileService quizService) {
     this.profileService = quizService;
   }
-  
 
   /**
    * Initialises the quiz.
-   * 
+   *
    * @return registration information
    */
   @PostMapping("/quiz")
@@ -69,12 +70,42 @@ public class ProfileController {
     }
     return new ResponseEntity<UserProfileQuestion>(question, HttpStatus.OK);
   }
-  
+
+  /**
+   * Validates the provided answer with the system answer.
+   *
+   * @param quizId unique quiz identifier
+   * @param questionId unique question identifier
+   * @param quizAnswer value object encapsulating the user provided answer
+   * @param request http servlet request
+   * @return value object encapsulating the solution
+   */
   @PostMapping(value="/quiz/{quizId}/question/{questionId}")
-  public ResponseEntity<String> answerQuestion(
+  public ResponseEntity<Solution> checkAnswer(
       @PathVariable String quizId, @PathVariable Long questionId,
-      @RequestBody QuizAnswer quizAnswer) {
-   // this.profileService.
-    return null;
+      @RequestBody UserAnswer quizAnswer, HttpServletRequest request) {
+    Solution solution = this.profileService.checkAnswer(
+        quizId, questionId, quizAnswer, RequestContextUtils.getLocale(request));
+    if (solution == null) {
+      return new ResponseEntity<Solution>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Solution>(solution, HttpStatus.OK);
+  }
+
+  /**
+   * Fetches the score object by quiz identifier.
+   *
+   * @param quizId unique quiz identifier
+   * @param request http servlet request
+   * @return value object encapsulating the score
+   */
+  @GetMapping(value="/quiz/{quizId}/score")
+  public ResponseEntity<Score> fetchScoreByQuizId(
+      @PathVariable String quizId, HttpServletRequest request) {
+    Score score = this.profileService.fetchScore(quizId, RequestContextUtils.getLocale(request));
+    if (score == null) {
+      return new ResponseEntity<Score>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Score>(score, HttpStatus.OK);
   }
 }

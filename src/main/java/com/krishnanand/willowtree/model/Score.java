@@ -12,6 +12,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -32,7 +34,8 @@ import lombok.ToString;
 @EqualsAndHashCode(exclude={"quiz"})
 @Getter
 @Setter
-public class Score implements Serializable {
+@JsonInclude(Include.NON_EMPTY)
+public class Score extends IError implements Serializable {
   
   @Id
   @GeneratedValue
@@ -43,15 +46,11 @@ public class Score implements Serializable {
   @OneToOne
   @MapsId
   @JsonManagedReference
+  @JsonIgnore
   private Quiz quiz;
   
   @Getter
   @Setter
   @Column(name="correct_answers")
   private int correctAnswers;
-  
-  @Getter
-  @Setter
-  @Column(name="incorrect_answers")
-  private int incorrectAnswers;
 }

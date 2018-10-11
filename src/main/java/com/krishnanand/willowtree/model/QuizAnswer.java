@@ -1,8 +1,18 @@
 // Copyright 2018. All Rights Reserved.
 package com.krishnanand.willowtree.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.krishnanand.willowtree.utils.QuestionType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,31 +21,30 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * An instance of this class encapsulates the user provided answer of the quiz question.
- * 
+ * An instance of this class encapsulates the answer of the quiz.
+ *
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude= {"quizQuestion"})
+@EqualsAndHashCode(exclude= {"quizQuestion"})
+@Entity
+@Table(name="quiz_answer")
 public class QuizAnswer {
   
-  // Quiz Id associated with the question.
-  private String quizId;
+  @Id
+  @GeneratedValue
+  @Column(name="id")
+  @JsonIgnore
+  private Long id;
+
+  @OneToOne
+  @MapsId
+  @JsonManagedReference
+  private QuizQuestion quizQuestion;
   
-  // Unique profile id that 
-  @JsonProperty("id")
-  private String profileId;
-  
-  // User provided answer.
-  @JsonProperty("answer")
-  private String quizAnswer;
-  
-  // Unique question id associated wit the question.
-  private Long questionId;
-  
-  
-  private QuestionType questionType;
+  @Column(name="correct_answer")
+  private String correctAnswer;
 }

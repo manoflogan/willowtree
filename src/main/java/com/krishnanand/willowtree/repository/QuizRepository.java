@@ -11,6 +11,9 @@ import com.krishnanand.willowtree.model.Quiz;
  */
 public interface QuizRepository extends JpaRepository<Quiz, Long>, QuizRepositoryCustom {
   
+  /**
+   * Returns value object associated with quiz id.
+   */
   Quiz findByQuizId(String quizId);
 
 }

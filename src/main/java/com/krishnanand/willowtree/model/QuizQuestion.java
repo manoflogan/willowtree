@@ -3,6 +3,7 @@ package com.krishnanand.willowtree.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,8 +13,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.krishnanand.willowtree.utils.QuestionType;
@@ -34,7 +40,9 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@Table(name="quiz_questions")
+@Table(name="quiz_questions",
+    uniqueConstraints={
+    @UniqueConstraint(columnNames = {"id", "quiz_id"})})
 public class QuizQuestion implements Serializable {
   
   @Id
@@ -43,15 +51,36 @@ public class QuizQuestion implements Serializable {
   @JsonIgnore
   private Long id;
   
+  @Column(name="attempts")
+  private int numberOfAttempts;
+
+  /** Enumeration representing the question asked.*/
   @Enumerated(EnumType.STRING)
   private QuestionType questionType;
-  
-  @Column(name="answer_id")
-  private Long answerId;
+
+  /** Flag to indicate if the question has been answered correctly. */
+  @Column(name="question_answered")
+  private Boolean questionAnswered;
   
   @ManyToOne(fetch=FetchType.EAGER)
   @JoinColumn(name="quiz_id")
   @JsonIgnore
   @JsonManagedReference
   private Quiz quiz;
+
+  @OneToOne(cascade= {CascadeType.ALL}, mappedBy="quizQuestion", fetch=FetchType.EAGER)
+  @JsonBackReference
+  private QuizAnswer quizAnswer;
+
+  /**
+   * Sets the default value to false.
+   */
+  @PrePersist
+  @PreUpdate
+  void markQuestionToFalseIfNotInitialised() {
+    // Inserting false instead of nulls.
+    if (this.questionAnswered == null) {
+      questionAnswered = Boolean.FALSE;
+    }
+  }
 }

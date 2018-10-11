@@ -4,8 +4,9 @@ package com.krishnanand.willowtree.service;
 import java.util.Locale;
 
 import com.krishnanand.willowtree.model.Quiz;
-import com.krishnanand.willowtree.model.QuizAnswer;
+import com.krishnanand.willowtree.model.Score;
 import com.krishnanand.willowtree.model.Solution;
+import com.krishnanand.willowtree.model.UserAnswer;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
 
 /**
@@ -35,11 +36,22 @@ public interface IProfileService {
       String quizId, Locale locale);
   
   /**
+   * Verifies the user answer with the one on the record.
    * 
-   * @param quizId
-   * @param answer
-   * @return
+   * @param quizId unique quiz identifier
+   * @param questionId unique question identifier
+   * @param answer value object representing the user provided answer
+   * @param locale locale object
    */
-  Solution checkAnswer(String quizId, QuizAnswer answer); 
+  Solution checkAnswer(String quizId, Long questionId, UserAnswer answer, Locale locale);
+  
+  /**
+   * Fetches the score by quiz id.
+   * 
+   * @param quizId unique quiz identifier
+   * @param locale locale object
+   * @return score representation of quiz
+   */
+  Score fetchScore(String quizId, Locale locale);
 
 }

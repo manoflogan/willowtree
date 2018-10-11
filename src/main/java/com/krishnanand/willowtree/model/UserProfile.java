@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -91,5 +93,14 @@ public class UserProfile implements Serializable {
       this.socialLinks = new LinkedHashSet<>();
     }
     return this.socialLinks;
+  }
+
+  // Set default values.
+  @PrePersist
+  @PreUpdate
+  public void initialiseNulls() {
+    if (this.jobTitle == null) {
+      this.jobTitle = "";
+    }
   }
 }

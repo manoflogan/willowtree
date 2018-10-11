@@ -9,7 +9,17 @@ package com.krishnanand.willowtree.utils;
 public enum QuestionType {
   
   /**
-   * Indicates that the user name has to select the profile from list of head shots.
+   * Indicates that the user has to identify profile from a list of headshots.
    */
-  PROFILE_NAME_FROM_HEAD_SHOT
+  PROFILE_FROM_HEAD_SHOTS,
+  
+  /**
+   * Indicates that the user has to identify headshot from a list of profiles
+   */
+  HEADSHOT_FROM_PROFILES,
+  
+  /**
+   * Indicates the user has to select the correct Matt from list of headshots with different Matts
+   */
+  MATT_MODE
 }

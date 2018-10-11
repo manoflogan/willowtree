@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
+ * An instance of this value object encapsulates both the system and the user provided answer.
+ *
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
@@ -19,41 +21,9 @@ public class Solution extends IError {
     
     private String quizId;
     
-    private String question;
+    private Long questionId;
     
-    private Boolean correctAnswer;
+    private Boolean isCorrect;
     
-    private Boolean playerAnswer;
-
-    public String getQuestion() {
-      return question;
-    }
-
-    public void setQuestion(String description) {
-      this.question = description;
-    }
-
-    public String getQuizId() {
-      return quizId;
-    }
-
-    public void setQuizId(String quizId) {
-      this.quizId = quizId;
-    }
-    
-    public Boolean getCorrectAnswer() {
-      return correctAnswer;
-    }
-
-    public void setCorrectAnswer(Boolean correctAnswer) {
-      this.correctAnswer = correctAnswer;
-    }
-
-    public Boolean getPlayerAnswer() {
-      return playerAnswer;
-    }
-
-    public void setPlayerAnswer(Boolean playerAnswer) {
-      this.playerAnswer = playerAnswer;
-    }
+    private String playerAnswer;
 }

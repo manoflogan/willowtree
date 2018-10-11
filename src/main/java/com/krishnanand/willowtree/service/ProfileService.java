@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,13 +32,16 @@ import com.krishnanand.willowtree.model.ProfileFetchStatus;
 import com.krishnanand.willowtree.model.Quiz;
 import com.krishnanand.willowtree.model.QuizAnswer;
 import com.krishnanand.willowtree.model.QuizQuestion;
+import com.krishnanand.willowtree.model.Score;
 import com.krishnanand.willowtree.model.Solution;
+import com.krishnanand.willowtree.model.UserAnswer;
 import com.krishnanand.willowtree.model.UserProfile;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
 import com.krishnanand.willowtree.repository.IProfileFetchStatusRepository;
 import com.krishnanand.willowtree.repository.IQuizQuestionRepository;
 import com.krishnanand.willowtree.repository.IUserProfileRepository;
 import com.krishnanand.willowtree.repository.QuizRepository;
+import com.krishnanand.willowtree.repository.ScoreRepository;
 import com.krishnanand.willowtree.utils.QuestionType;
 
 /**
@@ -70,6 +75,9 @@ public class ProfileService implements IProfileService {
   
   @Autowired
   private IQuizQuestionRepository quizQuestionRepository;
+  
+  @Autowired
+  private ScoreRepository scoreRepository;
 
   @Autowired
   ProfileService(IProfileFetchStatusRepository fetchStatusRepository,
@@ -80,37 +88,41 @@ public class ProfileService implements IProfileService {
 
   /**
    * Initiates a one time initialisation of user profiles to persist them in the database.
-   * 
-   * <p>Implementation uses a profile fetch status to verify if the profiles have been intialised.
-   * If they have not been intialised, then a HTTP request is made to fetch, deserialise, and 
-   * persist the data.
-   * 
-   * <p><em>IMPORTANT</em>: To ensure that the profiles are initialised only once, it is recommended
-   * that the initialisation process be invoked in a module that is invoked only once, such as
-   * application listeners.
+   *
+   * <p>Implementation uses a profile fetch status to verify if the profiles have been
+   * intialised. If they have not been intialised, then a HTTP request is made to fetch,
+   * deserialise, and persist the data.
+   *
+   * <p><em>IMPORTANT</em>: To ensure that the profiles are initialised only once, it is
+   *  recommended that the initialisation process be invoked in a module that is invoked only
+   *  once, such as application listeners.
    */
   @Override
   @Transactional
   public boolean initialiseProfiles() {
-    ProfileFetchStatus profileFetchStatus = this.fetchStatusRepository.findByFetched(Boolean.TRUE);
+    ProfileFetchStatus profileFetchStatus =
+        this.fetchStatusRepository.findByFetched(Boolean.TRUE);
     if (profileFetchStatus == null || profileFetchStatus.getFetched() == null
         || !profileFetchStatus.getFetched().booleanValue()) {
       LOG.debug("Initialising the user profiles.");
-      List<UserProfile> userProfiles = this.restTemplate.execute(this.url, HttpMethod.GET, null,
-          new ResponseExtractor<List<UserProfile>>() {
+      List<UserProfile> userProfiles =
+          this.restTemplate.execute(this.url, HttpMethod.GET, null,
+              new ResponseExtractor<List<UserProfile>>() {
 
-            @Override
-            public List<UserProfile> extractData(ClientHttpResponse response) throws IOException {
-              try (InputStream is = response.getBody();) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                SimpleModule module = new SimpleModule();
-                module.addDeserializer(List.class, new UserProfileDeserialiser());
-                objectMapper.registerModule(module);
-                return objectMapper.readValue(is, new TypeReference<List<UserProfile>>() {});
-              }
-            }
+                @Override
+                public List<UserProfile> extractData(ClientHttpResponse response)
+                    throws IOException {
+                  try (InputStream is = response.getBody();) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    SimpleModule module = new SimpleModule();
+                    module.addDeserializer(List.class, new UserProfileDeserialiser());
+                    objectMapper.registerModule(module);
+                    return objectMapper.readValue(
+                        is, new TypeReference<List<UserProfile>>() {});
+                  }
+                }
 
-          });
+              });
       this.userProfileRepository.saveAll(userProfiles);
       ProfileFetchStatus status = new ProfileFetchStatus();
       status.setFetched(Boolean.TRUE);
@@ -122,6 +134,9 @@ public class ProfileService implements IProfileService {
     return true;
   }
 
+  /**
+   * Registers a quiz.
+   */
   @Override
   @Transactional
   public Quiz registerQuiz() {
@@ -130,7 +145,7 @@ public class ProfileService implements IProfileService {
 
   /**
    * Fetches profile and head shots of questions.
-   * 
+   *
    * <p>In addition, the implementation records the type of questions asked for the quiz.
    */
   @Override
@@ -146,23 +161,21 @@ public class ProfileService implements IProfileService {
     Collections.shuffle(userProfiles);
     UserProfileQuestion userProfileQuestion = new UserProfileQuestion();
     // Choose the first user profile.
-    UserProfile first = userProfiles.get(0);
+    int num = new SecureRandom().nextInt(this.imagePictureCount);
+    UserProfile first = userProfiles.get(num);
     userProfileQuestion.setQuizId(quizId);
     QuizQuestion quizQuestion =
-        this.initialiseQuizQuestion(quizId, QuestionType.PROFILE_NAME_FROM_HEAD_SHOT,
-            first.getId());
+        this.initialiseQuizQuestion(quizId, QuestionType.PROFILE_FROM_HEAD_SHOTS,
+            first.getHeadshot().getHeadshotId());
     userProfileQuestion.setQuestionId(quizQuestion.getId());
     // Choose random name.
-    int num = new SecureRandom().nextInt(this.imagePictureCount);
-    int count = 0;
+    this.setQuestionText(userProfileQuestion, locale, first.getFirstName(),
+        first.getLastName());
     for (UserProfile userProfile : userProfiles) {
-      if (count == num) {
-        this.setQuestionText(userProfileQuestion, locale, userProfile.getFirstName(),
-            userProfile.getLastName());
-      }
       HeadShot headshot = userProfile.getHeadshot();
-      userProfileQuestion.addImage(headshot.getUrl(), headshot.getHeight(), headshot.getWidth());
-      count ++;
+      userProfileQuestion.addImage(
+          headshot.getUrl(), headshot.getHeight(), headshot.getWidth(),
+          headshot.getHeadshotId());
     }
     LOG.info("Fetching the user profiles and headshots completed for quiz id :" + quizId);
     return userProfileQuestion;
@@ -170,26 +183,33 @@ public class ProfileService implements IProfileService {
   
   /**
    * Registers the questions associated with a quiz.
-   * 
+   *
    * @param quizId unique quiz id
    * @param questionType question type
-   * @param correctId id to be compared against.
+   * @param answer id correct identifier used to compare against;
    */
   private QuizQuestion initialiseQuizQuestion(String quizId, QuestionType questionType,
-      Long answerId) {
-    QuizQuestion quizQuestion = new QuizQuestion();
+      String answerId) {
     Quiz quizObject = this.quizRepository.findByQuizId(quizId);
+    
+    QuizQuestion quizQuestion = new QuizQuestion();
     quizQuestion.setQuiz(quizObject);
     quizQuestion.setQuestionType(questionType);
-    quizQuestion.setAnswerId(answerId);
     quizObject.getQuizQuestions().add(quizQuestion);
-    this.quizQuestionRepository.save(quizQuestion);
-    return quizQuestion;
+    
+    // Initialising quiz answer.
+    QuizAnswer quizAnswer = new QuizAnswer();
+    quizAnswer.setCorrectAnswer(answerId);
+    quizQuestion.setQuizAnswer(quizAnswer);
+    quizAnswer.setQuizQuestion(quizQuestion);
+    
+    QuizQuestion savedEntity = this.quizQuestionRepository.save(quizQuestion);
+    return savedEntity;
   }
   
   /**
    * Sets the question text based on locale.
-   * 
+   *
    * @param userProfileQuestion user profile
    * @param questionType enum representing the question type
    * @param locale locale
@@ -203,19 +223,92 @@ public class ProfileService implements IProfileService {
 
   /**
    * Checks the solution against the data sets.
-   * 
+   *
    * <p>The implementation checks for the following:
    * <ul>
    *   <li>Verify that the quiz game exists. If not, then an error is returned.</li>
    *   <li>Verify if the question exists. If not, the the error is returned.</li>
    *   <li>If the game exists, and the question has been registered, the solution is checked against
    *   the table based on question type.</li>
-   *   <li>The answer is either marked as correct 
+   *   <li>The answer is either marked as correct, or incorrect.</li>
+   *   <li>Mark the question as answered.</li>
    * </ul>
    * @param answer answer representing the user response
    */
   @Override
-  public Solution checkAnswer(String quizId, QuizAnswer answer) {
-    return null;
+  @Transactional
+  public Solution checkAnswer(
+      String quizId, Long questionId, UserAnswer answer, Locale locale) {
+    // Check if the quiz exists.
+    Quiz quiz = this.quizRepository.findByQuizId(quizId);
+    if (quiz == null) {
+      Solution error = new Solution();
+      error.addError(400, this.messageSource.getMessage(
+          "quiz.not.found", new Object[] {quizId}, locale));
+      return error;
+    }
+    List<String> allQuestions = getAllQuizQuestionTypes();
+    List<String> askedQuestionTypes =
+        this.quizQuestionRepository.findQuestionTypesByQuizId(quiz.getQuizId());
+    allQuestions.removeAll(askedQuestionTypes);
+    if (allQuestions.equals(askedQuestionTypes)) {
+      Solution error = new Solution();
+      error.addError(400,
+          this.messageSource.getMessage("quiz.ended", new Object[] {quizId}, locale));
+    }
+
+    // If the question has been asked.
+    Optional<QuizQuestion> optionalQuizQuestion =
+        this.quizQuestionRepository.findById(questionId);
+    if(!optionalQuizQuestion.isPresent()) {
+      Solution error = new Solution();
+      error.addError(400, this.messageSource.getMessage(
+          "question.not.found", new Object[] {questionId, quizId}, locale));
+      return error;
+    }
+
+    // If the question has been previous answered.
+    QuizQuestion quizQuestion = optionalQuizQuestion.get();
+    if (quizQuestion.getQuestionAnswered() != null &&
+        quizQuestion.getQuestionAnswered().booleanValue()) {
+      Solution error = new Solution();
+      error.addError(400, this.messageSource.getMessage(
+          "question.already.asked", new Object[] {questionId}, locale));
+      return error;
+    }
+    // Update the score.
+    
+    Solution solution = this.scoreRepository.updateScore(quizQuestion, answer);
+    // Saved by reference
+    this.quizQuestionRepository.save(quizQuestion);
+    return solution;
+  }
+  
+  /**
+   * Returns a list of quiz question types.
+   */
+  private List<String> getAllQuizQuestionTypes() {
+    List<String> allQuestions = new ArrayList<>();
+    QuestionType[] questionTypes = QuestionType.values();
+    for (QuestionType questionType : questionTypes) {
+      allQuestions.add(questionType.name());
+    }
+    return allQuestions;
+  }
+
+  /**
+   * Return the score by quiz id.
+   */
+  @Override
+  @Transactional
+  public Score fetchScore(String quizId, Locale locale) {
+    Quiz quizObject = this.quizRepository.findByQuizId(quizId);
+    if (quizObject == null) {
+      Score score = new Score();
+      score.addError(400,
+          this.messageSource.getMessage("quiz.not.found", new Object[] {quizId}, locale));
+      return score;
+    }
+    return quizObject.getScore();
   }
 }

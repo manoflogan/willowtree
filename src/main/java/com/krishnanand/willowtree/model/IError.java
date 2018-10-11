@@ -47,7 +47,7 @@ public abstract class IError {
   /**
    * Returns a list of errors.
    */
-  List<Error> getErrors() {
+  public List<Error> getErrors() {
     return this.errors;
   }
   
@@ -57,7 +57,7 @@ public abstract class IError {
    * @param code error code
    * @param message error message
    */
-  void addError(int code,  String message) {
+  public void addError(int code,  String message) {
     this.errors.add(new Error(code, message));
   }
 }

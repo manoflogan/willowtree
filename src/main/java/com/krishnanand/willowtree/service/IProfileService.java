@@ -4,7 +4,7 @@ package com.krishnanand.willowtree.service;
 import java.util.Locale;
 
 import com.krishnanand.willowtree.model.Quiz;
-import com.krishnanand.willowtree.model.Score;
+import com.krishnanand.willowtree.model.ScoreMixin;
 import com.krishnanand.willowtree.model.Solution;
 import com.krishnanand.willowtree.model.UserAnswer;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
@@ -52,6 +52,6 @@ public interface IProfileService {
    * @param locale locale object
    * @return score representation of quiz
    */
-  Score fetchScore(String quizId, Locale locale);
+  ScoreMixin fetchScore(String quizId, Locale locale);
 
 }

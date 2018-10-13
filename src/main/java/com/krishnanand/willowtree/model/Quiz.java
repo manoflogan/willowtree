@@ -2,6 +2,8 @@
 package com.krishnanand.willowtree.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -59,11 +62,26 @@ public class Quiz implements Serializable {
   @OneToMany(cascade= {CascadeType.ALL}, mappedBy="quiz")
   @JsonBackReference
   private Set<QuizQuestion> quizQuestions;
+
+  @Column(name="created_timestamp")
+  private LocalDateTime creationTimestamp;
+
+  @Column(name="last_updated_timestamp")
+  private LocalDateTime lastModifiedTimestamp;
   
   public Set<QuizQuestion> getQuizQuestions() {
     if (this.quizQuestions == null) {
       this.quizQuestions = new LinkedHashSet<>();
     }
     return this.quizQuestions;
+  }
+
+  @PrePersist
+  void updateTimestamp() {
+    LocalDateTime utcNow = LocalDateTime.now(ZoneOffset.UTC);
+    if (creationTimestamp == null) {
+      this.creationTimestamp = utcNow;
+    }
+    this.lastModifiedTimestamp = utcNow;
   }
 }

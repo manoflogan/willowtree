@@ -35,7 +35,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @JsonInclude(Include.NON_EMPTY)
-public class Score extends IError implements Serializable {
+public class Score implements Serializable {
   
   @Id
   @GeneratedValue
@@ -43,14 +43,12 @@ public class Score extends IError implements Serializable {
   @Column(name="score_id")
   private Long id;
 
+  @Column(name="score")
+  private int score;
+
   @OneToOne
   @MapsId
   @JsonManagedReference
   @JsonIgnore
   private Quiz quiz;
-  
-  @Getter
-  @Setter
-  @Column(name="correct_answers")
-  private int correctAnswers;
 }

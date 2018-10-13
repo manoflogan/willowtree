@@ -57,16 +57,17 @@ public class ScoreRepositoryImpl implements ScoreRepositoryCustom {
         Solution solution = new Solution();
         solution.setQuestionId(answer.getQuestionId());
         solution.setQuizId(answer.getQuizId());
+        solution.setPlayerAnswer(answer.getAnswer());
         if (quizQuestion.getQuizAnswer().getCorrectAnswer().equals(answer.getAnswer())) {
           solution.setIsCorrect(Boolean.TRUE);
-          solution.setPlayerAnswer(answer.getAnswer());
-          score.setCorrectAnswers(score.getCorrectAnswers() + 1);
-          quizQuestion.setQuestionAnswered(true);
+          quizQuestion.setAnsweredCorrectly(true);
+          score.setScore(score.getScore() + 1);
           em.merge(score);
         } else {
           solution.setIsCorrect(Boolean.FALSE);
+          quizQuestion.setIncorrectAttempts(quizQuestion.getIncorrectAttempts() + 1);
         }
-        quizQuestion.setNumberOfAttempts(quizQuestion.getNumberOfAttempts() + 1);
+        quizQuestion.setTotalAttempts(quizQuestion.getTotalAttempts() + 1);
         return solution;
       }
       

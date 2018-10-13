@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.krishnanand.willowtree.model.Quiz;
-import com.krishnanand.willowtree.model.Score;
+import com.krishnanand.willowtree.model.ScoreMixin;
 import com.krishnanand.willowtree.model.Solution;
 import com.krishnanand.willowtree.model.UserAnswer;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
@@ -100,12 +100,13 @@ public class ProfileController {
    * @return value object encapsulating the score
    */
   @GetMapping(value="/quiz/{quizId}/score")
-  public ResponseEntity<Score> fetchScoreByQuizId(
+  public ResponseEntity<ScoreMixin> fetchScoreByQuizId(
       @PathVariable String quizId, HttpServletRequest request) {
-    Score score = this.profileService.fetchScore(quizId, RequestContextUtils.getLocale(request));
+    ScoreMixin score =
+        this.profileService.fetchScore(quizId, RequestContextUtils.getLocale(request));
     if (score == null) {
-      return new ResponseEntity<Score>(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<ScoreMixin>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<Score>(score, HttpStatus.OK);
+    return new ResponseEntity<ScoreMixin>(score, HttpStatus.OK);
   }
 }

@@ -50,17 +50,14 @@ public class QuizQuestion implements Serializable {
   @Column(name="id")
   @JsonIgnore
   private Long id;
-  
-  @Column(name="attempts")
-  private int numberOfAttempts;
 
   /** Enumeration representing the question asked.*/
   @Enumerated(EnumType.STRING)
   private QuestionType questionType;
 
   /** Flag to indicate if the question has been answered correctly. */
-  @Column(name="question_answered")
-  private Boolean questionAnswered;
+  @Column(name="answered_correctly")
+  private Boolean answeredCorrectly;
   
   @ManyToOne(fetch=FetchType.EAGER)
   @JoinColumn(name="quiz_id")
@@ -72,6 +69,12 @@ public class QuizQuestion implements Serializable {
   @JsonBackReference
   private QuizAnswer quizAnswer;
 
+  @Column(name="total_attempts")
+  private int totalAttempts;
+
+  @Column(name="incorrect_attempts")
+  private int incorrectAttempts;
+
   /**
    * Sets the default value to false.
    */
@@ -79,8 +82,8 @@ public class QuizQuestion implements Serializable {
   @PreUpdate
   void markQuestionToFalseIfNotInitialised() {
     // Inserting false instead of nulls.
-    if (this.questionAnswered == null) {
-      questionAnswered = Boolean.FALSE;
+    if (this.answeredCorrectly == null) {
+      answeredCorrectly = Boolean.FALSE;
     }
   }
 }

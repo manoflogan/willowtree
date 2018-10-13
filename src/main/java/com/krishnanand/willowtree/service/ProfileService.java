@@ -33,6 +33,7 @@ import com.krishnanand.willowtree.model.Quiz;
 import com.krishnanand.willowtree.model.QuizAnswer;
 import com.krishnanand.willowtree.model.QuizQuestion;
 import com.krishnanand.willowtree.model.Score;
+import com.krishnanand.willowtree.model.ScoreMixin;
 import com.krishnanand.willowtree.model.Solution;
 import com.krishnanand.willowtree.model.UserAnswer;
 import com.krishnanand.willowtree.model.UserProfile;
@@ -250,7 +251,7 @@ public class ProfileService implements IProfileService {
     List<String> allQuestions = getAllQuizQuestionTypes();
     List<String> askedQuestionTypes =
         this.quizQuestionRepository.findQuestionTypesByQuizId(quiz.getQuizId());
-    allQuestions.removeAll(askedQuestionTypes);
+
     if (allQuestions.equals(askedQuestionTypes)) {
       Solution error = new Solution();
       error.addError(400,
@@ -269,8 +270,8 @@ public class ProfileService implements IProfileService {
 
     // If the question has been previous answered.
     QuizQuestion quizQuestion = optionalQuizQuestion.get();
-    if (quizQuestion.getQuestionAnswered() != null &&
-        quizQuestion.getQuestionAnswered().booleanValue()) {
+    if (quizQuestion.getAnsweredCorrectly() != null &&
+        quizQuestion.getAnsweredCorrectly().booleanValue()) {
       Solution error = new Solution();
       error.addError(400, this.messageSource.getMessage(
           "question.already.asked", new Object[] {questionId}, locale));
@@ -301,14 +302,16 @@ public class ProfileService implements IProfileService {
    */
   @Override
   @Transactional
-  public Score fetchScore(String quizId, Locale locale) {
+  public ScoreMixin fetchScore(String quizId, Locale locale) {
     Quiz quizObject = this.quizRepository.findByQuizId(quizId);
+    ScoreMixin scoreMixin = new ScoreMixin();
     if (quizObject == null) {
-      Score score = new Score();
-      score.addError(400,
+      scoreMixin.addError(400,
           this.messageSource.getMessage("quiz.not.found", new Object[] {quizId}, locale));
-      return score;
+    } else {
+      scoreMixin.setQuizId(quizObject.getQuizId());
+      scoreMixin.setScore(quizObject.getScore().getScore());
     }
-    return quizObject.getScore();
+    return scoreMixin;
   }
 }

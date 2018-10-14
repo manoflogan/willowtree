@@ -16,6 +16,8 @@ import com.krishnanand.willowtree.model.Solution;
 import com.krishnanand.willowtree.model.UserAnswer;
 
 /**
+ * Custom implementation to persist the {@link Score}.
+ *
  * @author krishnanand (Kartik Krishnanand)
  */
 public class ScoreRepositoryImpl implements ScoreRepositoryCustom {
@@ -42,6 +44,12 @@ public class ScoreRepositoryImpl implements ScoreRepositoryCustom {
    *       <li>Increments the score's correct answer by 1, and persists to the database.</li>
    *       <li>Marks the question as answered.This means that the system will not accept any more
    *       answers against the question.</li>
+   *     </ul>
+   *   </li>
+   *   <li>If the answer is incorrect, then
+   *     <ul>
+   *       <li>The number of incorrect attempts are incremented by 1.</li>
+   *       <li>The number of total attempts are incremented by 1.</li>
    *     </ul>
    *   </li>
    *   <li>Increments the number of attempts of the question.</li>

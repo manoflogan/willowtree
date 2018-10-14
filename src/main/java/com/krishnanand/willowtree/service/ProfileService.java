@@ -203,8 +203,7 @@ public class ProfileService implements IProfileService {
     quizQuestion.setQuizAnswer(quizAnswer);
     quizAnswer.setQuizQuestion(quizQuestion);
     
-    QuizQuestion savedEntity = this.quizQuestionRepository.save(quizQuestion);
-    return savedEntity;
+    return this.quizQuestionRepository.save(quizQuestion);
   }
   
   /**

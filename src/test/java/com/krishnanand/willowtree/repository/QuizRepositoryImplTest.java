@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 import com.krishnanand.willowtree.GuessGame;
 import com.krishnanand.willowtree.model.Quiz;
 import com.krishnanand.willowtree.model.UserProfile;
-import com.krishnanand.willowtree.repository.QuizRepositoryImplTest.TestConfig;
 import com.krishnanand.willowtree.util.UserProfileAnswer;
 import com.krishnanand.willowtree.utils.ConfigurationHelper;
 
@@ -33,6 +32,8 @@ import com.krishnanand.willowtree.utils.ConfigurationHelper;
  * @author krishnanand (Kartik Krishnanand)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+// To load the profiles from a local file.
+// @SpringBootTest(classes= {GuessGame.class, TestConfig.class})
 @SpringBootTest(classes= {GuessGame.class})
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 public class QuizRepositoryImplTest {
@@ -74,5 +75,4 @@ public class QuizRepositoryImplTest {
     List<UserProfile> userProfiles = this.quizRepository.fetchImagesQuestion(6);
     Assert.assertFalse(userProfiles.isEmpty());
   }
-
 }

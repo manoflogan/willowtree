@@ -2,14 +2,17 @@
 package com.krishnanand.willowtree.repository;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.retry.annotation.Backoff;
@@ -33,6 +36,8 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
   
   private TransactionTemplate transactionTemplate;
   
+  private static final Log LOG = LogFactory.getLog(QuizRepositoryImpl.class);
+  
   @PersistenceContext
   private EntityManager em;
   
@@ -48,6 +53,9 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
   @Override
   @Retryable(maxAttempts=5, value= {Exception.class}, backoff=@Backoff(delay=2000))
   public Quiz registerQuiz() {
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Initialising the quiz instance");
+    }
     String uniqueKey = UUID.randomUUID().toString().replaceAll("-", "");
     Quiz quiz = new Quiz();
     quiz.setQuizId(uniqueKey);
@@ -63,6 +71,9 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
       }
       
     });
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Quiz profile initialised with quiz id" + quiz.getQuizId());
+    }
     return quiz;
   }
 
@@ -76,7 +87,10 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
     Object[] numberOfRows = query.getSingleResult();
     long minId = (long) numberOfRows[0];
     long maxId = (long) numberOfRows[1];
-    List<Long> profileIds = new ArrayList<>();
+    Set<Long> profileIds = new HashSet<>();
+    if (LOG.isInfoEnabled()) {
+      LOG.info(String.format("Fetching %d rows between %d and %d", count, minId, maxId));
+    }
     int num = 0;
     SecureRandom rnd = new SecureRandom();
     while (num < 15) { // Arbitrarily large number
@@ -84,7 +98,9 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
       if (n < minId) {
         continue;
       }
-      profileIds.add((long) n);
+      if (!profileIds.contains((long) n)) {
+        profileIds.add((long) n);
+      }
       num ++; 
     }
     TypedQuery<UserProfile> userProfileQuery =

@@ -31,35 +31,27 @@ import lombok.ToString;
 @ToString(exclude= {"profile"})
 @Entity
 @Table(name="social_links")
+@Getter
+@Setter
 public class SocialLinks implements Serializable {
   
   @Id
   @GeneratedValue(strategy=GenerationType.AUTO)
   @JsonIgnore
-  @Getter
-  @Setter
   @Column(name="social_link_id", nullable=false)
-  private long id;
+  private Long id;
   
-  @Setter
-  @Getter
   @Column(name="social_link_type")
   private String type;
   
-  @Setter
-  @Getter
   @Column(name="call_to_action")
   private String callToAction;
   
-  @Setter
-  @Getter
   @Column
   private String url;
   
   @ManyToOne(fetch=FetchType.LAZY)
   @JoinColumn(name="profile_id")
-  @Getter
-  @Setter
   @JsonIgnore
   private UserProfile profile;
 }

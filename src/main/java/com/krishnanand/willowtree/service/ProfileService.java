@@ -32,7 +32,6 @@ import com.krishnanand.willowtree.model.ProfileFetchStatus;
 import com.krishnanand.willowtree.model.Quiz;
 import com.krishnanand.willowtree.model.QuizAnswer;
 import com.krishnanand.willowtree.model.QuizQuestion;
-import com.krishnanand.willowtree.model.Score;
 import com.krishnanand.willowtree.model.ScoreMixin;
 import com.krishnanand.willowtree.model.Solution;
 import com.krishnanand.willowtree.model.UserAnswer;

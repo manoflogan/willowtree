@@ -1,0 +1,98 @@
+[
+  {
+    "id": "profile_1",
+    "type": "people",
+    "slug": "jane-doe",
+    "jobTitle": "Vice President",
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "headshot": {
+      "type": "image",
+      "mimetype": "image/jpeg",
+      "id": "headshot_id_1",
+      "url": "//images.ctfassets.net/headshot_jane_doe.jpg",
+      "alt": "alt Jane Doe",
+      "height": 340,
+      "width": 340
+    },
+    "socialLinks": [ ]
+  },
+  {
+    "id": "profile_2",
+    "type": "people",
+    "slug": "john-doe",
+    "jobTitle": "Principal Software Engineer",
+    "firstName": "John",
+    "lastName": "Doe",
+    "headshot": {
+      "type": "image",
+      "mimetype": "image/jpeg",
+      "id": "headshot_id_2",
+      "url": "//images.ctfassets.net/headshot_john_doe.jpg",
+      "alt": "headshot john doe",
+      "height": 340,
+      "width": 340
+    },
+    "socialLinks": [ ]
+  },
+  {
+    "id": "profile_3",
+    "type": "people",
+    "slug": "mary-lamb",
+    "jobTitle": "Software Engineer",
+    "firstName": "Mary",
+    "lastName": "Lamb",
+    "headshot": {
+      "type": "image",
+      "mimetype": "image/jpeg",
+      "id": "headshot_id_3",
+      "url": "//images.ctfassets.net/headshot_mary_lamb.jpg",
+      "alt": "headshot mary lamb",
+      "height": 340,
+      "width": 340
+    },
+    "socialLinks": [ ]
+  },
+  {
+    "id": "profile_4",
+    "type": "people",
+    "slug": "jack-smith",
+    "jobTitle": "Chief Talent Officer",
+    "firstName": "Jack",
+    "lastName": "Smith",
+    "headshot": {
+      "type": "image",
+      "mimetype": "image/jpeg",
+      "id": "headshot_id_4",
+      "url": "//images.ctfassets.net/headshot_jack_smith.jpg",
+      "alt": "headshot jack smith",
+      "height": 340,
+    "width": 340
+    },
+    "socialLinks": [ ]
+  },
+  {
+    "id": "profile_5",
+    "type": "people",
+    "slug": "jill-smith",
+    "jobTitle": "Senior Technical Recruiter",
+    "firstName": "Jill",
+    "lastName": "Smith",
+    "headshot": {
+      "type": "image",
+      "mimetype": "image/png",
+      "id": "headshot_id_5",
+      "url": "//images.ctfassets.net/headshot_jill_smith.jpg",
+      "alt": "alt Jill Smith",
+      "height": 664,
+      "width": 664
+    },
+    "socialLinks": [
+      {
+        "type": "linkedin",
+        "callToAction": "Follow Christy Phillips on LinkedIn",
+        "url": "https://www.linkedin.com/in/christyphillips1/"
+      }
+    ]
+  }
+]

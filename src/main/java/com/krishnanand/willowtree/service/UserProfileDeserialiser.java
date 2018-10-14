@@ -20,6 +20,34 @@ import com.krishnanand.willowtree.model.SocialLinks;
 import com.krishnanand.willowtree.model.UserProfile;
 
 /**
+ * Deserialiser implementation to convert JSON array of list of objects. The example payload is
+ * given below
+ * <pre class="code">
+ {
+    id: "<unique_id>",
+    type: "<string>",
+    slug: "<name-slug>",
+    jobTitle: "<title>",
+    firstName: "John",
+    lastName: "Doe",
+    headshot: {
+        type: "image",
+        mimeType: "image/png",
+        id: "<headshot_id>",
+        url: "<url>",
+        alt: "<image alt>",
+        height: <image height in pixels>,
+        width: <image width in pixels>
+    },
+    bio: "<bio>",
+    socialLinks: [{
+        type: "linkedin",
+        callToAction: "<cta>",
+        url: "<url>"
+    }]
+}
+ * </pre>
+ * 
  * @author krishnanand (Kartik Krishnanand)
  */
 public class UserProfileDeserialiser extends JsonDeserializer<List<UserProfile>> {
@@ -42,6 +70,7 @@ public class UserProfileDeserialiser extends JsonDeserializer<List<UserProfile>>
       userProfile.setJobTitle(stringOrNull(jsonNode, "jobTitle"));
       userProfile.setFirstName(stringOrNull(jsonNode, "firstName"));
       userProfile.setLastName(stringOrNull(jsonNode, "lastName"));
+      userProfile.setBio(stringOrNull(jsonNode, "bio"));
 
       HeadShot headshot = userProfile.getHeadshot();
       JsonNode headshotNode = jsonNode.get("headshot");

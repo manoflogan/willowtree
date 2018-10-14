@@ -63,7 +63,6 @@ public class UserProfile implements Serializable {
   @Column(nullable = false)
   private String slug;
 
-
   @Column(name = "job_title")
   private String jobTitle;
 
@@ -72,6 +71,9 @@ public class UserProfile implements Serializable {
 
   @Column(name = "last_name")
   private String lastName;
+
+  @Column(name="bio")
+  private String bio;
 
   @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "profile", optional=false, fetch=FetchType.LAZY)
   @Setter(AccessLevel.NONE)

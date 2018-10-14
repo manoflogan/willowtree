@@ -1,5 +1,5 @@
 // Copyright 2018. All Rights Reserved.
-package com.krishnanand.willowtree.util;
+package com.krishnanand.willowtree.utils;
 
 import java.io.InputStream;
 import java.util.List;

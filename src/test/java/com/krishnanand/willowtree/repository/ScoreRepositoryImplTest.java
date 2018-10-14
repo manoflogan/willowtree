@@ -93,7 +93,5 @@ public class ScoreRepositoryImplTest {
     expectedScore.setId(quizObject.getId());
     expectedScore.setScore(1);
     Assert.assertEquals(expectedScore, actualScore);
-    
   }
-
 }

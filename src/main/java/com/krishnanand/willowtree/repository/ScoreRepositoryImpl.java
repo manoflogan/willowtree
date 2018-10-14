@@ -4,6 +4,8 @@ package com.krishnanand.willowtree.repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -21,6 +23,8 @@ import com.krishnanand.willowtree.model.UserAnswer;
  * @author krishnanand (Kartik Krishnanand)
  */
 public class ScoreRepositoryImpl implements ScoreRepositoryCustom {
+
+  private static final Log LOG = LogFactory.getLog(ScoreRepositoryImpl.class);
 
   private final JpaTransactionManager jpaTransactionManager;
   
@@ -61,12 +65,18 @@ public class ScoreRepositoryImpl implements ScoreRepositoryCustom {
 
       @Override
       public Solution doInTransaction(TransactionStatus status) {
+        if (LOG.isInfoEnabled()) {
+          LOG.info("Updating the score for user answer: " + answer);
+        }
         Score score = quizQuestion.getQuiz().getScore();
         Solution solution = new Solution();
         solution.setQuestionId(answer.getQuestionId());
         solution.setQuizId(answer.getQuizId());
         solution.setPlayerAnswer(answer.getAnswer());
         if (quizQuestion.getQuizAnswer().getCorrectAnswer().equals(answer.getAnswer())) {
+          if (LOG.isInfoEnabled()) {
+            LOG.info("The answer was found to be correct. The answer is marked as such.");
+          }
           solution.setIsCorrect(Boolean.TRUE);
           quizQuestion.setAnsweredCorrectly(true);
           score.setScore(score.getScore() + 1);

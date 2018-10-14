@@ -23,8 +23,8 @@ import org.springframework.web.client.RestTemplate;
 import com.krishnanand.willowtree.GuessGame;
 import com.krishnanand.willowtree.model.Quiz;
 import com.krishnanand.willowtree.model.UserProfile;
-import com.krishnanand.willowtree.util.UserProfileAnswer;
 import com.krishnanand.willowtree.utils.ConfigurationHelper;
+import com.krishnanand.willowtree.utils.UserProfileAnswer;
 
 /**
  * Unit test for {@link QuizRepositoryImpl}.

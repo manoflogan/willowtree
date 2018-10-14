@@ -25,8 +25,6 @@ import com.krishnanand.willowtree.utils.QuestionType;
  * @author krishnanand (Kartik Krishnanand)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-//To load the profiles from a local file.
-//@SpringBootTest(classes= {GuessGame.class, TestConfig.class})
 @SpringBootTest(classes= {GuessGame.class})
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ScoreRepositoryImplTest {

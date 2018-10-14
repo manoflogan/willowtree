@@ -3,6 +3,7 @@ package com.krishnanand.willowtree.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MapsId;
@@ -40,7 +41,7 @@ public class QuizAnswer {
   @JsonIgnore
   private Long id;
 
-  @OneToOne
+  @OneToOne(fetch=FetchType.EAGER)
   @MapsId
   @JsonManagedReference
   private QuizQuestion quizQuestion;

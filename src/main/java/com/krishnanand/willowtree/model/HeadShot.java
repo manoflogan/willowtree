@@ -50,20 +50,20 @@ public class HeadShot implements Serializable {
   @MapsId
   private UserProfile profile;
   
-  @Column(name="headshot_type")
+  @Column(name="headshot_type", nullable=true)
   private String type;
   
-  @Column(name="mime_type")
+  @Column(name="mime_type", nullable=true)
   private String mimeType;
   
-  @Column(name="headshot_id")
+  @Column(name="headshot_id", nullable=true)
   @JsonProperty("id")
   private String headshotId;
   
-  @Column
+  @Column(nullable=true)
   private String url;
   
-  @Column
+  @Column(nullable=true)
   private String alt;
   
   @Column(nullable=true)

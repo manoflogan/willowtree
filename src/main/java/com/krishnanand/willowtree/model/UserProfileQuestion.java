@@ -60,7 +60,7 @@ public class UserProfileQuestion {
     this.images = new LinkedHashSet<>();
   }
 
-  public void addImage(String url, int height, int width,String headshotId) {
+  public void addImage(String url, Integer height, Integer width, String headshotId) {
     this.images.add(new Image(url, height, width, headshotId));
   }
 }

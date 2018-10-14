@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.assertj.core.util.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -84,6 +85,11 @@ public class ProfileService implements IProfileService {
       IUserProfileRepository userProfileRepository) {
     this.fetchStatusRepository = fetchStatusRepository;
     this.userProfileRepository = userProfileRepository;
+  }
+  
+  @VisibleForTesting
+  public void setQuizQuestionRepository(IQuizQuestionRepository quizQuestionRepository) {
+    this.quizQuestionRepository = quizQuestionRepository;
   }
 
   /**
@@ -169,8 +175,7 @@ public class ProfileService implements IProfileService {
             first.getHeadshot().getHeadshotId());
     userProfileQuestion.setQuestionId(quizQuestion.getId());
     // Choose random name.
-    this.setQuestionText(userProfileQuestion, locale, first.getFirstName(),
-        first.getLastName());
+    this.setQuestionText(userProfileQuestion, locale, first.getFirstName(), first.getLastName());
     for (UserProfile userProfile : userProfiles) {
       HeadShot headshot = userProfile.getHeadshot();
       userProfileQuestion.addImage(
@@ -286,7 +291,8 @@ public class ProfileService implements IProfileService {
   /**
    * Returns a list of quiz question types.
    */
-  private List<String> getAllQuizQuestionTypes() {
+  @VisibleForTesting
+   List<String> getAllQuizQuestionTypes() {
     List<String> allQuestions = new ArrayList<>();
     QuestionType[] questionTypes = QuestionType.values();
     for (QuestionType questionType : questionTypes) {

@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
@@ -55,11 +56,11 @@ public class Quiz implements Serializable {
   @JsonIgnore
   private Long id;
   
-  @OneToOne(cascade= {CascadeType.ALL},mappedBy="quiz")
+  @OneToOne(cascade= {CascadeType.ALL},mappedBy="quiz", fetch = FetchType.EAGER)
   @JsonBackReference
   private Score score;
   
-  @OneToMany(cascade= {CascadeType.ALL}, mappedBy="quiz")
+  @OneToMany(cascade= {CascadeType.ALL}, mappedBy="quiz", fetch = FetchType.EAGER)
   @JsonBackReference
   private Set<QuizQuestion> quizQuestions;
 

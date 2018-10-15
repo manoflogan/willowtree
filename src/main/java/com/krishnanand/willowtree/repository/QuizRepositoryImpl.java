@@ -13,7 +13,6 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.assertj.core.util.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.retry.annotation.Backoff;
@@ -46,11 +45,6 @@ public class QuizRepositoryImpl implements QuizRepositoryCustom {
   public QuizRepositoryImpl(JpaTransactionManager jpaTransactionManager) {
     this.jpaTransactionManager = jpaTransactionManager;
     this.transactionTemplate = new TransactionTemplate(this.jpaTransactionManager);
-  }
-  
-  @VisibleForTesting
-  void setEntityManager(EntityManager em) {
-    this.em = em;
   }
 
   /**

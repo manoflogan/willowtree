@@ -121,12 +121,12 @@ public class ProfileServiceTest {
     Mockito.when(
         mockQuizQuestionRepository.findQuestionTypesByQuizId(quizObject.getQuizId())).thenReturn(
             this.profileService.getAllQuizQuestionTypes());
-    String quizId = "invalid";
-    Solution actual = this.profileService.checkAnswer(quizId, null, null, Locale.getDefault());
+    Solution actual = this.profileService.checkAnswer(quizObject.getQuizId(), null, null, Locale.getDefault());
     Solution expected = new Solution();
     expected.addError(400, this.messageSource.getMessage(
-        "quiz.ended", new Object[] {quizId}, Locale.getDefault()));
+        "quiz.ended", new Object[] {quizObject.getQuizId()}, Locale.getDefault()));
     Assert.assertEquals(actual, expected);
+    Mockito.verify(mockQuizQuestionRepository).findQuestionTypesByQuizId(quizObject.getQuizId());
   }
   
   @Test
@@ -300,6 +300,16 @@ public class ProfileServiceTest {
     ScoreMixin expected = new ScoreMixin();
     expected.setQuizId(quizObject.getQuizId());
     expected.setScore(0);
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void testFetchScore_InvalidQuizId() throws Exception {
+    Locale locale = Locale.getDefault();
+    ScoreMixin actual = this.profileService.fetchScore("missing", locale);
+    ScoreMixin expected = new ScoreMixin();
+    expected.addError(
+        400, this.messageSource.getMessage("quiz.not.found", new Object[] {"missing"}, locale));
     Assert.assertEquals(expected, actual);
   }
 }

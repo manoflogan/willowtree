@@ -66,7 +66,7 @@ public class ProfileController {
         quizId, RequestContextUtils.getLocale(request));
     LOG.debug("Fetching user profile and headshot for " + quizId);
     if (question == null) {
-      return new ResponseEntity<UserProfileQuestion>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<UserProfileQuestion>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return new ResponseEntity<UserProfileQuestion>(question, HttpStatus.OK);
   }

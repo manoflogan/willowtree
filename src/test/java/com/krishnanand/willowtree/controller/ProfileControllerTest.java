@@ -2,7 +2,10 @@
 package com.krishnanand.willowtree.controller;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -11,9 +14,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,6 +39,7 @@ import com.krishnanand.willowtree.model.ScoreMixin;
 import com.krishnanand.willowtree.model.Solution;
 import com.krishnanand.willowtree.model.UserProfileQuestion;
 import com.krishnanand.willowtree.repository.IQuizQuestionRepository;
+import com.krishnanand.willowtree.service.IProfileService;
 
 
 /**
@@ -185,5 +192,54 @@ public class ProfileControllerTest {
     ObjectMapper mapper = new ObjectMapper();
     QuizQuestion quizQuestion = initQuizQuestion(mapper);
     this.checkScore(quizQuestion, "wrong", mapper, false);
+  }
+
+  // ### Mocking Service calls to simulate error conditions. ###
+  @Test
+  public void testFetchUserProfileAndHeadShots_Error() throws Exception {
+    IProfileService profileService = Mockito.mock(IProfileService.class);
+    HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    ProfileController controller = new ProfileController(profileService);
+    String quizId = "quizId";
+    Locale locale = Locale.getDefault();
+    Mockito.when(request.getLocale()).thenReturn(locale);
+    Mockito.when(profileService.fetchUserProfilesAndHeadShots(quizId, locale)).thenReturn(null);
+    ResponseEntity<UserProfileQuestion> responseEntity =
+        controller.fetchUserProfileAndHeadShots(quizId, request);
+    Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    Assert.assertNull(responseEntity.getBody());
+  }
+
+  @Test
+  public void testCheckAnswer_Error() throws Exception {
+    IProfileService profileService = Mockito.mock(IProfileService.class);
+    HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    ProfileController controller = new ProfileController(profileService);
+    String quizId = "quizId";
+    Long questionId = 1L;
+    Locale locale = Locale.getDefault();
+    Mockito.when(request.getLocale()).thenReturn(locale);
+    Mockito.when(profileService.checkAnswer(
+        quizId, questionId, null, locale)).thenReturn(null);
+    ResponseEntity<Solution> responseEntity =
+        controller.checkAnswer(quizId, questionId, null, request);
+    Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    Assert.assertNull(responseEntity.getBody());
+  }
+
+  @Test
+  public void testFetchScoreByQuizId_Error() throws Exception {
+    IProfileService profileService = Mockito.mock(IProfileService.class);
+    HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    ProfileController controller = new ProfileController(profileService);
+    String quizId = "quizId";
+    Long questionId = 1L;
+    Locale locale = Locale.getDefault();
+    Mockito.when(request.getLocale()).thenReturn(locale);
+    Mockito.when(profileService.fetchScore(quizId, locale)).thenReturn(null);
+    ResponseEntity<ScoreMixin> responseEntity =
+        controller.fetchScoreByQuizId(quizId, request);
+    Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    Assert.assertNull(responseEntity.getBody());
   }
 }

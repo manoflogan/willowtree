@@ -330,9 +330,9 @@ public class ProfileService implements IProfileService {
     } else {
       scoreMixin.setQuizId(quizObject.getQuizId());
       scoreMixin.setScore(quizObject.getScore().getScore());
-    }
-    if (LOG.isInfoEnabled()) {
-      LOG.info("Returning the score for quiz id " + quizId);
+      if (LOG.isInfoEnabled()) {
+        LOG.info("Returning the score for quiz id " + quizId);
+      }
     }
     return scoreMixin;
   }

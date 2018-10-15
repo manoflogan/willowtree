@@ -20,6 +20,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -57,17 +58,20 @@ public class Quiz implements Serializable {
   private Long id;
   
   @OneToOne(cascade= {CascadeType.ALL},mappedBy="quiz", fetch = FetchType.EAGER)
-  @JsonBackReference
+  @JsonBackReference(value="quiz-score")
   private Score score;
   
   @OneToMany(cascade= {CascadeType.ALL}, mappedBy="quiz", fetch = FetchType.EAGER)
-  @JsonBackReference
+  @JsonBackReference(value="quiz-questions")
   private Set<QuizQuestion> quizQuestions;
 
   @Column(name="created_timestamp")
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
   private LocalDateTime creationTimestamp;
 
   @Column(name="last_updated_timestamp")
+  @JsonIgnore
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
   private LocalDateTime lastModifiedTimestamp;
   
   public Set<QuizQuestion> getQuizQuestions() {

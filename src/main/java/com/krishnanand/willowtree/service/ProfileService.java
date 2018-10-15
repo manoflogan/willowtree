@@ -150,7 +150,8 @@ public class ProfileService implements IProfileService {
   }
 
   /**
-   * Fetches profile and head shots of questions.
+   * Fetches profile and head shots of questions. The user is expected to select the head shot among
+   * multiple headshots.
    *
    * <p>In addition, the implementation records the type of questions asked for the quiz.
    */
@@ -158,7 +159,9 @@ public class ProfileService implements IProfileService {
   @Transactional
   public UserProfileQuestion fetchUserProfilesAndHeadShots(
       String quizId, Locale locale) {
-    LOG.info("Fetching the user profiles and headshots for quiz id: " + quizId);
+    if (LOG.isInfoEnabled()) {
+        LOG.info("Fetching the user profiles and headshots for quiz id: " + quizId);
+    }
     List<UserProfile> userProfiles =
         this.quizRepository.fetchImagesQuestion(this.imagePictureCount);
     if (userProfiles == null || userProfiles.isEmpty()) {
@@ -182,7 +185,9 @@ public class ProfileService implements IProfileService {
           headshot.getUrl(), headshot.getHeight(), headshot.getWidth(),
           headshot.getHeadshotId());
     }
-    LOG.info("Fetching the user profiles and headshots completed for quiz id :" + quizId);
+    if (LOG.isInfoEnabled()) {
+        LOG.info("Fetching the user profiles and headshots completed for quiz id :" + quizId);
+    }
     return userProfileQuestion;
   }
   
@@ -246,6 +251,7 @@ public class ProfileService implements IProfileService {
     // Check if the quiz exists.
     Quiz quiz = this.quizRepository.findByQuizId(quizId);
     if (quiz == null) {
+      LOG.warn("No quiz of id "  + quizId + " was found.");
       Solution error = new Solution();
       error.addError(400, this.messageSource.getMessage(
           "quiz.not.found", new Object[] {quizId}, locale));
@@ -256,6 +262,7 @@ public class ProfileService implements IProfileService {
         this.quizQuestionRepository.findQuestionTypesByQuizId(quiz.getQuizId());
 
     if (allQuestions.equals(askedQuestionTypes)) {
+      LOG.warn("Quiz of id "  + quizId + " has already ended.");
       Solution error = new Solution();
       error.addError(400,
           this.messageSource.getMessage("quiz.ended", new Object[] {quizId}, locale));
@@ -265,6 +272,7 @@ public class ProfileService implements IProfileService {
     Optional<QuizQuestion> optionalQuizQuestion =
         this.quizQuestionRepository.findById(questionId);
     if(!optionalQuizQuestion.isPresent()) {
+      LOG.warn("No question of id " + questionId + " was found.");
       Solution error = new Solution();
       error.addError(400, this.messageSource.getMessage(
           "question.not.found", new Object[] {questionId, quizId}, locale));
@@ -275,13 +283,16 @@ public class ProfileService implements IProfileService {
     QuizQuestion quizQuestion = optionalQuizQuestion.get();
     if (quizQuestion.getAnsweredCorrectly() != null &&
         quizQuestion.getAnsweredCorrectly().booleanValue()) {
+      LOG.warn("Question " + questionId + " was already answered.");
       Solution error = new Solution();
       error.addError(400, this.messageSource.getMessage(
           "question.already.asked", new Object[] {questionId}, locale));
       return error;
     }
     // Update the score.
-    
+    if (LOG.isInfoEnabled()) {
+        LOG.warn("Updating the score and number of attempts.");
+    }
     Solution solution = this.scoreRepository.updateScore(quizQuestion, answer);
     // Saved by reference
     this.quizQuestionRepository.save(quizQuestion);
@@ -308,13 +319,20 @@ public class ProfileService implements IProfileService {
   @Transactional
   public ScoreMixin fetchScore(String quizId, Locale locale) {
     Quiz quizObject = this.quizRepository.findByQuizId(quizId);
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Fetching the score for quiz id " + quizId);
+    }
     ScoreMixin scoreMixin = new ScoreMixin();
     if (quizObject == null) {
+      LOG.warn("No quiz was found for id:" + quizId);
       scoreMixin.addError(400,
           this.messageSource.getMessage("quiz.not.found", new Object[] {quizId}, locale));
     } else {
       scoreMixin.setQuizId(quizObject.getQuizId());
       scoreMixin.setScore(quizObject.getScore().getScore());
+    }
+    if (LOG.isInfoEnabled()) {
+      LOG.info("Returning the score for quiz id " + quizId);
     }
     return scoreMixin;
   }

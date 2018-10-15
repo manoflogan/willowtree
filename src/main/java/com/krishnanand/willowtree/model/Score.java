@@ -48,7 +48,7 @@ public class Score implements Serializable {
 
   @OneToOne
   @MapsId
-  @JsonManagedReference
+  @JsonManagedReference(value="quiz-score")
   @JsonIgnore
   private Quiz quiz;
 }

@@ -54,13 +54,13 @@ public class ProfileController {
   }
 
   /**
-   * Fetches the questions to be answered.
+   * Fetches the profile with multiple headshots.
    * 
    * @param quizId unique quiz identifier
    * @return unique question
    */
   @GetMapping(value="/quiz/{quizId}/identifyfromsixjson")
-  public ResponseEntity<UserProfileQuestion> fetchUserProfileAndHeadShot(
+  public ResponseEntity<UserProfileQuestion> fetchUserProfileAndHeadShots(
       @PathVariable("quizId") String quizId, HttpServletRequest request) {
     UserProfileQuestion question = this.profileService.fetchUserProfilesAndHeadShots(
         quizId, RequestContextUtils.getLocale(request));

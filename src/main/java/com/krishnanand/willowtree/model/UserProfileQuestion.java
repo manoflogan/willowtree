@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -34,6 +35,7 @@ public class UserProfileQuestion {
   @ToString
   @EqualsAndHashCode
   @AllArgsConstructor
+  @NoArgsConstructor
   @JsonInclude(Include.NON_EMPTY)
   private static class Image {
     

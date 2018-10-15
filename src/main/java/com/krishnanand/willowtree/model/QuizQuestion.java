@@ -62,7 +62,7 @@ public class QuizQuestion implements Serializable {
   @ManyToOne(fetch=FetchType.EAGER)
   @JoinColumn(name="quiz_id")
   @JsonIgnore
-  @JsonManagedReference
+  @JsonManagedReference(value="quiz-questions")
   private Quiz quiz;
 
   @OneToOne(cascade= {CascadeType.ALL}, mappedBy="quizQuestion", fetch=FetchType.EAGER)

@@ -21,6 +21,7 @@ import lombok.ToString;
  */
 @JsonInclude(Include.NON_EMPTY)
 @EqualsAndHashCode
+@ToString()
 public abstract class IError {
  
   @Data

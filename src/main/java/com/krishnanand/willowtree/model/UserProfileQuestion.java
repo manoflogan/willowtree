@@ -22,11 +22,12 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
-@ToString
-@EqualsAndHashCode
+@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
-public class UserProfileQuestion {
+@JsonInclude(Include.NON_EMPTY)
+public class UserProfileQuestion extends IError {
   
   /**
    * An instance of this class is used to encapsulate the image metadata.

@@ -1,6 +1,7 @@
 // Copyright 2018. All Rights Reserved.
 package com.krishnanand.willowtree.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -102,13 +103,30 @@ public class ProfileServiceTest {
     Assert.assertEquals(1, actual.getQuizQuestions().size());
     Assert.assertFalse(userProfileQuestion.getImages().isEmpty());
   }
+
+  @Test
+  public void testFetchUserProfilesAndHeadShots_Error() throws Exception {
+    Quiz actualQuiz = this.profileService.registerQuiz();
+    QuizRepository mockQuizRepository = Mockito.mock(QuizRepository.class);
+    this.profileService.setQuizRepository(mockQuizRepository);
+    Mockito.when(mockQuizRepository.fetchImagesQuestion(Mockito.anyInt())).thenReturn(
+        Mockito.eq(Collections.emptyList()));
+    UserProfileQuestion actual =
+        this.profileService.fetchUserProfilesAndHeadShots(
+            actualQuiz.getQuizId(), Locale.getDefault());
+    UserProfileQuestion expected = new UserProfileQuestion();
+    expected.addError(
+        404, this.messageSource.getMessage("user.profile.not.found",
+            new Object[] {actualQuiz.getQuizId()},  Locale.getDefault()));
+    Assert.assertEquals(expected, actual);
+  }
   
   @Test
   public void testCheckAnswer_QuizDoesNotExist() throws Exception {
     String quizId = "invalid";
     Solution actual = this.profileService.checkAnswer(quizId, null, null, Locale.getDefault());
     Solution expected = new Solution();
-    expected.addError(400, this.messageSource.getMessage(
+    expected.addError(404, this.messageSource.getMessage(
         "quiz.not.found", new Object[] {quizId}, Locale.getDefault()));
     Assert.assertEquals(actual, expected);
   }
@@ -116,12 +134,15 @@ public class ProfileServiceTest {
   @Test
   public void testCheckAnswer_QuizAllQuestionsAnswered() throws Exception {
     Quiz quizObject = this.profileService.registerQuiz();
-    IQuizQuestionRepository mockQuizQuestionRepository = Mockito.mock(IQuizQuestionRepository.class);
+    UserProfileQuestion questions = this.profileService.fetchUserProfilesAndHeadShots(
+        quizObject.getQuizId(), Locale.getDefault());
+    IQuizQuestionRepository mockQuizQuestionRepository = Mockito.spy(this.quizQuestionRepository);
     this.profileService.setQuizQuestionRepository(mockQuizQuestionRepository);
     Mockito.when(
         mockQuizQuestionRepository.findQuestionTypesByQuizId(quizObject.getQuizId())).thenReturn(
             this.profileService.getAllQuizQuestionTypes());
-    Solution actual = this.profileService.checkAnswer(quizObject.getQuizId(), null, null, Locale.getDefault());
+    Solution actual = this.profileService.checkAnswer(
+        quizObject.getQuizId(), questions.getQuestionId(), null, Locale.getDefault());
     Solution expected = new Solution();
     expected.addError(400, this.messageSource.getMessage(
         "quiz.ended", new Object[] {quizObject.getQuizId()}, Locale.getDefault()));
@@ -135,8 +156,8 @@ public class ProfileServiceTest {
     Solution actual = this.profileService.checkAnswer(
         quizObject.getQuizId(), 1000L, null, Locale.getDefault());
     Solution expected = new Solution();
-    expected.addError(400, this.messageSource.getMessage(
-        "question.not.found", new Object[] {quizObject.getQuizId()}, Locale.getDefault()));
+    expected.addError(404, this.messageSource.getMessage(
+        "question.not.found", new Object[] {1000L, quizObject.getQuizId()}, Locale.getDefault()));
     Assert.assertEquals(actual, expected);
   }
   
@@ -309,7 +330,7 @@ public class ProfileServiceTest {
     ScoreMixin actual = this.profileService.fetchScore("missing", locale);
     ScoreMixin expected = new ScoreMixin();
     expected.addError(
-        400, this.messageSource.getMessage("quiz.not.found", new Object[] {"missing"}, locale));
+        404, this.messageSource.getMessage("quiz.not.found", new Object[] {"missing"}, locale));
     Assert.assertEquals(expected, actual);
   }
 }

@@ -1,39 +1,43 @@
-# Restful Webservice to allow the users to player a bowling game [![Build Status](https://travis-ci.org/manoflogan/DsAndAlgo_Java.png)](https://travis-ci.org/krishnanand/bowling_game)
+# Restful Webservice to allow the users to play a quiz to identify your colleagues.
 
 ## Table of Contents
 
 - [Requirements](#requirements)
-- [Deployment](#deployment)
 - [Setup](#setup)
+- [Deployment](#deployment)
 - [API Endpoints](#api-endpoints)
-  * [Register Game](#registergame)
-      1. [Registration Success Response](#register-success-response)
-  * [Play the game](#play-game)
-      1. [Success Response](#success-responses)
-      2. [Error](#error-responses)
-         * [Game Not Found](#game-not-found-error)
-         * [Invalid Scoring Format](#score-format-invalid-error)
-         * [Game Not Found](#game-already-played-error)
-         * [Two threads attempting to score at the same time](#optimistic-locking-error)
-  * [Get Frame Score](#get-frame-score)
-      1. [Success Response](#score-success-response)
-      2. [Error](#score-error-response)
-         * [Game Not Found](#score-game-not-found)
+  * [Register Quiz](#register-quiz)
+      + [Register Success Fields](#success-response-fields)
+  * [Identify Profile From Among Headshots](#identify-profile-from-among-headshots)
+      + [Success Response Fields](#success-response-fields)
+      + [Error Response Fields](#error-response-fields)
+         * [User Profiles Not Found](#user-profiles-not-found)
+  * [Play Quiz](#play-the-quiz)
+      + [Success Response Fields](#success-response-fields-2)
+      + [Error Response Fields](#error-response-fields-1)
+         * [Quiz Not Found](#quiz-not-found)
+         * [Question Not Found](#question-not-found)
+         * [Question Already Answered](#question-already-answered-correctly)
+         * [Quiz Already Ended](#quiz-ended)
+  * [Get Score](#get-score)
+      + [Success Response Fields](#success-response-fields-3)
+      + [Error Response Fields](#error-response-fields-2)
+         * [Quiz Not Found](#quiz-not-found-1)
 
 
-### Requirements ###
+# Requirements
 
 * Java 8
 
 * Maven 3.x
 
-### Setup ###
+# Setup
 
 * Clone the repository.
 
 * Execute `cd willowtree`
 
-### Deployment ###
+# Deployment
 
 There are two ways to deploy the web application.
 
@@ -47,50 +51,63 @@ The RESTful services can be invoked after either steps is performed.
 IMPORTANT: these two instructions are mutually exclusive.
 
 
-# API Endpoints ###
+# API Endpoints
 
-## <a name="registergame">Register Game</a>
+## Register Quiz
 
-#### POST /willowtree/quiz ####
+`POST /willowtree/quiz`
 
-Registers a bowling game for the contestant and assigns a unique alphanumeric string to the contestant.
+Registers a quiz for the contestant and assigns a unique alphanumeric string to the contestant in response.
 
-#### <a name="register-success-response">Response Body</a> ####
-
-A response body will include:
-
-● a status code of 201 Created
-
-● Response Body Properties
+### Success Response Fields ###
+A response status code will be 201 Created and will have the following characteristics.
 
 | Name | Type | Description | Read only |
 | :---         |     :---:      |          :--- |      :---:      |
-| quizId  | string | Unique game id |true
+| quizId  | string | Unique quiz id |true
 | created | timestamp | UTC timestamp |true
 
+The sample response is given below:
 
 ```
 {
-    "game_id": "MYCjFlD8Rc9dzu5W",
+    "quizId": "MYCjFlD8Rc9dzu5W",
     "created": "2018-10-13T10:12:30.084"
 }
 ```
 
-### <a name="play-game">Play the game.</a> ###
+## Identify Profile from among headshots.
 
-#### GET /willowtree/quiz/<quizId>/identifyfromsixjson ####
+`GET /willowtree/quiz/<quizId>/identifyfromsixjson`
 
-Represents a question in which 6 headshots are returned, and the user is asked to select the headshot of the profile to be identified.
+Returns question in which 6 headshots are returned, and the user is asked to select the headshot of the profile to be identified.
 
-Response body after playing a frame is given below:
+The path variable `quizId` represents the unique quiz identifier.
+
+### Success Response Fields
+
+A response status code will be 200 OK. The success response encapsulates a unique question id that is used to play the quiz game.
 
 
 | Name | Type | Description | Read only |
 | :---         |     :---:      |          :--- |      :---:      |
-| quizId  | string | Unique game id passed as a path variable |true|
+| quizId  | string | Unique quiz id passed as a path variable |true|
 | questionId  | long | Unique question |true|
+| questionText | string | Question text|true|
+| images | array | array of head shots |true|
 
-#### <a name="success-responses">Success Response</a> ####
+
+The `images` array consists of maximum of 6 entries in which each entry contains the following
+
+| Name | Type | Description | Read only |
+| :---         |     :---:      |          :--- |      :---:      |
+| imageUrl  | string | url of the image asset |true|
+| height  | int | height of the image |false|
+| width | int | width of the image|false|
+| id | string | unique image identifier that may be an answer of to quiz question |true|
+
+
+The sample response is given below.
 
 ```
 {
@@ -138,15 +155,15 @@ Response body after playing a frame is given below:
 }
 ```
 
-#### <a name="error-responses">Error Responses</a> ####
+### Error Response Fields
 
-The error response is body is an array of errors.
+The error response encapsulates an array of errors.
 
 | Name | Type | Description | Read only |
 | :---         |     :---:      |          :--- |      :---:      |
 | errors  | array | array of error objects |true |
 
-where each error object consists of the following fields
+where each error object consists of the following data sets.
 
 | Name | Type | Description | Read only |
 | :---         |     :---:      |          :--- |      :---:      |
@@ -155,91 +172,74 @@ where each error object consists of the following fields
 
 Some of the sample responses are given below
 
-#### <a name="game-not-found-error">1. Game Not Found</a> ####
+#### User Profiles Not Found
 
-This will return a 404 error if no record for the game was found in the database.
+This will return a 404 error if no record for the quiz was found in the database.
 
 ```
 {
     "errors": [
         {
           "error_code": 404,
-          "error_message" : "No game was found for the game id: <game_id>."
+          "error_message" : "No user profiles found for quiz id <quiz id>."
         }
     ]
 }
 ```
 
-#### <a name="score-format-invalid-error">2. Invalid Scoring Format</a> ####
+### Play the quiz
 
-This will return a 404 error if no record for the game was found in the database.
+`POST /willowtree/quiz/<quiz_id>/question/<question_id>`
 
-```
-{
-    "errors": [
-        {
-          "error_code": 400,
-          "error_message" : "Score format: <score> is invalid."
-        }
-    ]
-}
-```
+The endpoint expects a request body that will encapsulate the answer to the question asked in the previous section.
 
-#### <a name="game-already-played-error">3. Game Not Found</a> ####
-
-This will return a 404 error if no record for the game was found in the database.
-
-```
-{
-    "errors": [
-        {
-          "error_code": 400,
-          "error_message" : "Game:\'<game_id>\' has already been played."
-        }
-    ]
-}
-```
-
-#### <a name="optimistic-locking-error">4. Two threads attempting to score at the same time.</a> ####
-
-This will return a 404 error if no record for the game was found in the database.
-
-```
-{
-    "errors": [
-        {
-          "error_code": 500,
-          "error_message" : "Unable to save score: '<score>' for game: '<game_id>'."
-        }
-    ]
-}
-```
-
-### <a name="get-frame-score">Get the current score.</a> ###
-
-#### GET /game/<game_id>/score ####
-
-Returns the score of the game at any given time.
-
-The response body consists of
+The path variables are given below.
 
 | Name | Type | Description | Read only |
 | :---         |     :---:      |          :--- |      :---:      |
-| game_id  | string | Unique game id passed as a path variable |true|
-| total_score | int | Total score till the present time|true|
+| quiz_id  | string | Unique quiz id passed as a path variable |true|
+| question_id | long | unique question id. This can be obtained from the response body|true|
 
-#### <a name="score-success-response">1. Success Response</a>
+The request body encapsulates the user provided response, and its body is given below
 
-The sample response is given below.
+| Name | Type | Description | Read only |
+| :---         |     :---:      |          :--- |      :---:      |
+| quizId  | string | Unique quiz id  |true|
+| questionId | long | unique question id; an example of which is passed in the response body in the previous section|true|
+| id | string | unique headshot id |true|
+
+The sample request is given below
+
+```
+curl -XPOST -H "Content-type: application/json" -d '{"id": "<headshot_id>", "quizId": "<quizId>", "questionId": "<questionId>"}' 'http://localhost:8080/willowtree/quiz/{{quizId}}/question/{{questionId}}'
+```
+
+
+#### Success Response Fields
+
+If a valid response body has been returned, then the response body has the following format below.
+
+| Name | Type | Description | Read only |
+| :---         |     :---:      |          :--- |      :---:      |
+| quizId  | string | Unique quiz id  |true|
+| questionId | long | unique question id; an example of which is passed in the response body in the previous section|true|
+| correctAnswer | boolean | true/false |true|
+| playerAnswer | string | user provided input used to verify the headshot id |true|
+
+The sample response is given below:
+
 ```
 {
-    "total_score": 182,
-    "game_id": "<game_id>"
+    "quizId": "711a27201fd841418c717771f789da00",
+    "questionId": 175,
+    "isCorrect": true,
+    "playerAnswer": "2JbFih4rzyK8E0eIUmUCeo"
 }
 ```
 
-#### <a name="score-success-response">2. Error Response</a> ####
-The error response is body is an array of errors.
+#### Error Response Fields
+
+The error response body represents an error of errors returned as 200 OK
 
 | Name | Type | Description | Read only |
 | :---         |     :---:      |          :--- |      :---:      |
@@ -254,16 +254,98 @@ where each error object consists of the following fields
 
 Some of the sample responses are given below
 
-#### <a name="score-game-not-found">Game Not Found</a> ####
+##### Quiz Not Found
 
 ```
 {
     "errors": [
         {
             "error_code": 404,
-            "error_message": "No game was found for the game id: <game_id>."
+            "error_message": "Quiz <quiz_id> was not found."
         }
     ]
 }
 ```
-0
+
+
+##### Question Not Found
+
+```
+{
+    "errors": [
+        {
+            "error_code": 404,
+            "error_message": "Question <question_id> was asked for the quiz id <quiz_id>."
+        }
+    ]
+}
+```
+
+##### Question Already Answered Correctly
+
+```
+{
+    "errors": [
+        {
+            "error_code": 404,
+            "error_message": "Question {0} has already been answered correctly."
+        }
+    ]
+}
+```
+
+##### Quiz Ended
+
+```
+{
+    "errors": [
+        {
+            "error_code": 400,
+            "error_message": "Quiz <quiz id> has already ended."
+        }
+    ]
+}
+```
+
+### Get Score
+
+`GET /willowtree/quiz/<quizId>/score`
+
+Returns the score for the quiz game.
+
+#### Success Response Fields</a>
+
+| Name | Type | Description | Read only |
+| :---         |     :---:      |          :--- |      :---:      |
+| quizId  | string | Unique quiz id passed as a path variable |true|
+| score  | int | Quiz Score |true|
+
+#### Error Response Fields</a>
+
+The error response body represents an error of errors returned as 200 OK
+
+| Name | Type | Description | Read only |
+| :---         |     :---:      |          :--- |      :---:      |
+| errors  | array | array of error objects |true |
+
+where each error object consists of the following fields
+
+| Name | Type | Description | Read only |
+| :---         |     :---:      |          :--- |      :---:      |
+| error code  | number | error code indicating the kind of error|true |
+| error message  | string | user friendly message |true |
+
+Some of the sample responses are given below
+
+##### Quiz Not Found
+
+```
+{
+    "errors": [
+        {
+            "error_code": 404,
+            "error_message": "Quiz <quiz_id> was not found."
+        }
+    ]
+}
+```

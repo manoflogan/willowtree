@@ -12,7 +12,7 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
-@ToString
+@ToString(callSuper=true)
 @EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter

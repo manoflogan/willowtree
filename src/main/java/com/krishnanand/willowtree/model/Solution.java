@@ -13,8 +13,8 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
-@ToString
-@EqualsAndHashCode()
+@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper=true)
 @Getter
 @Setter
 public class Solution extends IError {

@@ -73,7 +73,6 @@ public class Quiz implements Serializable {
 
   @Column(name="last_updated_timestamp")
   @JsonIgnore
-  @JsonFormat(shape = JsonFormat.Shape.STRING)
   private LocalDateTime lastModifiedTimestamp;
   
   public Set<QuizQuestion> getQuizQuestions() {

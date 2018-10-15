@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -67,6 +68,7 @@ public class Quiz implements Serializable {
 
   @Column(name="created_timestamp")
   @JsonFormat(shape = JsonFormat.Shape.STRING)
+  @JsonProperty("created")
   private LocalDateTime creationTimestamp;
 
   @Column(name="last_updated_timestamp")

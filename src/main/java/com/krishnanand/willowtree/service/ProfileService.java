@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.assertj.core.util.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -87,12 +86,12 @@ public class ProfileService implements IProfileService {
     this.userProfileRepository = userProfileRepository;
   }
   
-  @VisibleForTesting
+  // Visible for testing.
   public void setQuizQuestionRepository(IQuizQuestionRepository quizQuestionRepository) {
     this.quizQuestionRepository = quizQuestionRepository;
   }
   
-  @VisibleForTesting
+  // Visible for testing.
   public void setQuizRepository(QuizRepository quizRepository) {
     this.quizRepository = quizRepository;
   }
@@ -311,7 +310,7 @@ public class ProfileService implements IProfileService {
   /**
    * Returns a list of quiz question types.
    */
-  @VisibleForTesting
+   // Visible for testing.
    List<String> getAllQuizQuestionTypes() {
     List<String> allQuestions = new ArrayList<>();
     QuestionType[] questionTypes = QuestionType.values();

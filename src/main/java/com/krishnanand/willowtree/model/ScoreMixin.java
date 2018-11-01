@@ -3,8 +3,6 @@ package com.krishnanand.willowtree.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -14,8 +12,6 @@ import lombok.ToString;
 @Data
 @ToString(callSuper=true)
 @EqualsAndHashCode(callSuper=true)
-@Getter
-@Setter
 public class ScoreMixin extends IError {
   
   private int score;

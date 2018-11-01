@@ -36,8 +36,6 @@ import lombok.ToString;
         @Index(name="index_headshot_id", columnList="headshot_id"),
         @Index(name="index_headshot_url", columnList="url")
     })
-@Getter
-@Setter
 public class HeadShot implements Serializable {
   
   @Id

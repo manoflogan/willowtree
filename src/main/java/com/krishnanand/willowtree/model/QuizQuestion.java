@@ -38,8 +38,6 @@ import lombok.ToString;
 @ToString(exclude="quiz")
 @EqualsAndHashCode(exclude="quiz")
 @Entity
-@Getter
-@Setter
 @Table(name="quiz_questions",
     uniqueConstraints={
     @UniqueConstraint(columnNames = {"id", "quiz_id"})})

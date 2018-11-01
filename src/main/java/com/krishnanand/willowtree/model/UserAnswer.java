@@ -6,8 +6,6 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
  * An instance of this class encapsulates the serialised user response to the question. 
@@ -23,8 +21,6 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
-@ToString
-@EqualsAndHashCode
 public class UserAnswer implements Serializable {
   
   @JsonProperty("id")

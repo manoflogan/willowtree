@@ -27,10 +27,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * An instance of this class encapsulates the registration information.
@@ -38,10 +34,6 @@ import lombok.ToString;
  * @author krishnanand (Kartik Krishnanand)
  */
 @Data
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
 @Entity
 @Table(name="quiz", indexes= {
     @Index(columnList="quiz_id", name="index_quiz_id")

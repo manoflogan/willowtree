@@ -26,17 +26,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * An instance of this class encapsulates a profile of the user.
  */
 @Data
-@EqualsAndHashCode()
-@ToString()
 @Entity
 @Table(name = "user_profile", indexes= {
     @Index(columnList="first_name", name="index_profile_first_name"),
@@ -44,8 +40,6 @@ import lombok.ToString;
     @Index(columnList="profile_type", name="index_profile_type")
 })
 @JsonInclude(Include.NON_NULL)
-@Getter
-@Setter
 public class UserProfile implements Serializable {
   
   @Id

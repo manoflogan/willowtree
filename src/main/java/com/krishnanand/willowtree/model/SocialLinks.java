@@ -17,8 +17,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -31,8 +29,6 @@ import lombok.ToString;
 @ToString(exclude= {"profile"})
 @Entity
 @Table(name="social_links")
-@Getter
-@Setter
 public class SocialLinks implements Serializable {
   
   @Id

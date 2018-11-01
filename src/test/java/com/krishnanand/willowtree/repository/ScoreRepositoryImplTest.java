@@ -45,7 +45,7 @@ public class ScoreRepositoryImplTest {
   public void setUp(String answerId) throws Exception {
     quizObject = quizRepository.registerQuiz();
     // Init quiz question.
-     quizQuestion = new QuizQuestion();
+    quizQuestion = new QuizQuestion();
     quizQuestion.setQuiz(quizObject);
     quizQuestion.setQuestionType(QuestionType.PROFILE_FROM_HEAD_SHOTS);
     quizObject.getQuizQuestions().add(quizQuestion);

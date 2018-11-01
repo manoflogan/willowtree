@@ -10,10 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * An instance of this class verifies if the profiles have been fetched or not.
@@ -22,8 +20,6 @@ import lombok.ToString;
  */
 @Data
 @Entity
-@ToString
-@EqualsAndHashCode
 @Table(name="profile_fetch_status")
 public class ProfileFetchStatus {
   
@@ -32,18 +28,12 @@ public class ProfileFetchStatus {
   @Column(name="fetch_id")
   private Long fetchId;
   
-  @Getter
-  @Setter
   @Column(name="fetch_status")
   private Boolean fetched;
   
-  @Getter
-  @Setter
   @Column(name="created_time")
   private LocalDateTime creationTimeStamp;
-  
-  @Getter
-  @Setter
+
   @Column(name="last_modified_time")
   private LocalDateTime lastModifiedTimeStamp;
 

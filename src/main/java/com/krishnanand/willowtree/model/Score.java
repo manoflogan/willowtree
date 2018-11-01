@@ -18,8 +18,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -32,8 +30,6 @@ import lombok.ToString;
 @Data
 @ToString(exclude= {"quiz"})
 @EqualsAndHashCode(exclude={"quiz"})
-@Getter
-@Setter
 @JsonInclude(Include.NON_EMPTY)
 public class Score implements Serializable {
   

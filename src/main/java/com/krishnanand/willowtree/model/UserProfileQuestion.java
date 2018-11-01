@@ -24,8 +24,6 @@ import lombok.ToString;
 @Data
 @ToString(callSuper=true)
 @EqualsAndHashCode(callSuper=true)
-@Getter
-@Setter
 @JsonInclude(Include.NON_EMPTY)
 public class UserProfileQuestion extends IError {
   

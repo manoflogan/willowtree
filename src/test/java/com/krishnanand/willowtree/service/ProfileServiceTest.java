@@ -79,7 +79,7 @@ public class ProfileServiceTest {
     this.fetchStatusRepository.deleteAll();
     Assert.assertTrue(this.profileService.initialiseProfiles());
     List<UserProfile> userProfiles = this.userProfileRepository.findAll();
-    Assert.assertEquals(userProfiles.size(), 153);
+    Assert.assertEquals(userProfiles.size(), 157);
   }
   
   @Test

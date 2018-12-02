@@ -4,12 +4,10 @@ package com.krishnanand.willowtree;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.retry.annotation.EnableRetry;
 
 /**
  * Entry point to the application.
  */
-@EnableRetry
 @SpringBootApplication
 @EnableJpaRepositories(considerNestedRepositories = true)
 public class GuessGame {
